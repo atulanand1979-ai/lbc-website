@@ -1,0 +1,28 @@
+{
+  "name": "Leicester Bhangra Classes",
+  "tagline": "Building Confidence. Creating Community. Celebrating Culture.",
+  "strapline": "Britain's largest Bhangra school · 8 cities · Est. 2015",
+  "phone": "0116 309 0069",
+  "phoneHref": "tel:01163090069",
+  "email": "info@leicesterbhangraclasses.co.uk",
+  "founded": "Founded 15 July 2015 by Aman Singh",
+  "legalName": "Leicester Bhangra Classes Limited",
+  "nav": [
+    { "label": "Home", "url": "/" },
+    { "label": "Workshops", "url": "/workshops/" },
+    { "label": "Locations", "url": "/locations/" },
+    { "label": "Sign Up", "url": "/signup/" },
+    { "label": "Book Us", "url": "/book-us/" },
+    { "label": "Charity", "url": "/charity/" },
+    { "label": "Reviews", "url": "/reviews/" },
+    { "label": "Shop", "url": "/shop/" },
+    { "label": "Contact", "url": "/contact/" }
+  ],
+  "social": [
+    { "label": "Instagram", "url": "", "todo": "ADD INSTAGRAM LINK" },
+    { "label": "YouTube", "url": "", "todo": "ADD YOUTUBE LINK" },
+    { "label": "Facebook", "url": "", "todo": "ADD FACEBOOK LINK" },
+    { "label": "TikTok", "url": "", "todo": "ADD TIKTOK LINK" }
+  ],
+  "cities": ["Leicester", "Kettering", "Coventry", "Bedford", "Nottingham", "Wolverhampton", "Northampton", "Derby"]
+}

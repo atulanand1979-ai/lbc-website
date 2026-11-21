@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Lbc_Api": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7005",
+      "launchBrowser": false
+    }
+  }
+}

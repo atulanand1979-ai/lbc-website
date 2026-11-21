@@ -1,0 +1,7 @@
+**/bin/
+**/obj/
+**/node_modules/
+src/web/
+tests/
+.git/
+**/local.settings.json

@@ -1,0 +1,50 @@
+---
+layout: layouts/base.njk
+title: Join as a Member
+permalink: /join/
+description: Become a Leicester Bhangra Classes member — Bronze, Silver or Gold monthly membership.
+scripts: ["/js/join.js"]
+---
+<section class="page-hero">
+  <div class="container page-hero__inner">
+    <span class="eyebrow">Membership</span>
+    <h1 class="h-page">Become a member</h1>
+    <p class="lead">Unlimited classes for one monthly price. No booking needed — just turn up.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <form id="join-form" class="form steps" novalidate>
+      <div class="alert" data-message hidden></div>
+      <fieldset style="border:0;padding:0;margin:0">
+        <legend class="step__title"><span class="step__num">1</span>Choose your membership</legend>
+        <div class="options">
+          <label class="option"><input type="radio" name="tier" value="bronze" required><span>Bronze — £25/month<small>Unlimited Beginners classes within one city</small></span></label>
+          <label class="option"><input type="radio" name="tier" value="silver"><span>Silver — £35/month<small>Unlimited Beginners classes across all locations</small></span></label>
+          <label class="option"><input type="radio" name="tier" value="gold"><span>Gold — £45/month<small>Beginners &amp; advanced, all locations, plus perks</small></span></label>
+        </div>
+      </fieldset>
+
+      <div class="field" id="home-venue-field" hidden style="max-width:420px">
+        <label for="homeVenueSlug">Your home city (Bronze)</label>
+        <select id="homeVenueSlug" name="homeVenueSlug"><option value="">Loading…</option></select>
+      </div>
+
+      <fieldset class="form-panel" style="margin:0">
+        <legend class="step__title"><span class="step__num">2</span>Your details</legend>
+        <div class="form">
+          <div class="summary" id="join-summary" hidden></div>
+          <div class="form__row">
+            <div class="field"><label for="j-name">Full name</label><input id="j-name" name="name" autocomplete="name" required></div>
+            <div class="field"><label for="j-email">Email</label><input id="j-email" name="email" type="email" autocomplete="email" required></div>
+          </div>
+          <div class="field" style="max-width:420px"><label for="j-phone">Mobile number</label><input id="j-phone" name="phone" type="tel" autocomplete="tel" required></div>
+          <div data-captcha></div>
+          <p class="small muted">Your membership renews monthly. To change or cancel it, contact us.</p>
+          <div><button class="btn btn--yellow-outline" type="submit">Continue to payment</button></div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</section>

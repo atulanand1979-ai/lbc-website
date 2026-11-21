@@ -1,0 +1,58 @@
+---
+layout: layouts/base.njk
+title: Workshops
+permalink: /workshops/
+description: Bhangra workshops for workplaces, SEN schools, care homes and schools — tailored to your group and experience level.
+scripts: ["/js/enquiry.js"]
+---
+<section class="page-hero">
+  <div class="container page-hero__inner">
+    <span class="eyebrow">Workshops</span>
+    <h1 class="h-page">Bhangra workshops for every group</h1>
+    <p class="lead">Energetic, inclusive sessions tailored to your team, pupils or residents.</p>
+    <div class="btn-row"><a href="#enquire" class="btn btn--yellow">Enquire about a workshop</a></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container grid grid--wide">
+    <article class="card card--feature" id="corporate">
+      <div class="ph ph--light ph--card">Photo: Corporate workshop</div>
+      <h2>Corporate Workshops</h2>
+      <p>Bring energy, laughter and team spirit to your workplace with our Bhangra dance workshops! Our corporate sessions offer a fun and engaging way for colleagues to connect, build confidence and enjoy something different together. Whether you're planning a team-building day, a staff wellbeing event or a cultural celebration, our workshops can be tailored to suit your team and experience level.</p>
+      <p class="card__perfect"><b>Perfect for:</b> Team-building days, staff events, wellbeing sessions and corporate celebrations.</p>
+    </article>
+    <article class="card card--feature" id="sen">
+      <div class="ph ph--light ph--card">Photo: SEN workshop</div>
+      <h2>SEN Workshops</h2>
+      <p>Our SEN Bhangra workshops provide a welcoming, inclusive and supportive environment where everyone can enjoy the joy of movement. Sessions can be adapted to suit different abilities, communication styles and sensory needs, allowing participants to take part in a way that feels comfortable for them. Through music, rhythm and simple dance movements, we encourage self-expression, confidence, creativity and connection.</p>
+      <p class="card__perfect"><b>Perfect for:</b> Special educational needs schools, specialist provisions, support groups and inclusive community events.</p>
+    </article>
+    <article class="card card--feature" id="care-home">
+      <div class="ph ph--light ph--card">Photo: Care home workshop</div>
+      <h2>Care Home Workshops</h2>
+      <p>Bring music, movement and smiles to your care home with our enjoyable Bhangra sessions. Designed to encourage participation at a comfortable pace, our workshops can include gentle movements, clapping, rhythm and opportunities to experience Punjabi culture. Activities can be adapted for seated or standing participation, helping residents enjoy a lively, social and memorable experience together.</p>
+      <p class="card__perfect"><b>Perfect for:</b> Care homes, residential homes, day centres and community groups supporting older adults.</p>
+    </article>
+    <article class="card card--feature" id="school">
+      <div class="ph ph--light ph--card">Photo: School workshop</div>
+      <h2>School Workshops</h2>
+      <p>Make learning active, exciting and memorable with our school Bhangra workshops! Pupils can discover the vibrant traditions of Punjabi dance while developing coordination, rhythm, creativity and teamwork. Our sessions encourage children to express themselves, celebrate cultural diversity and learn about different traditions in an engaging, hands-on environment. Workshops can be adapted to suit different age groups and school events.</p>
+      <p class="card__perfect"><b>Perfect for:</b> Primary and secondary schools, cultural diversity days, enrichment activities, PE lessons and school celebrations.</p>
+    </article>
+  </div>
+</section>
+
+<section class="section section--cream" id="enquire">
+  <div class="container split">
+    <div class="section__head">
+      <span class="eyebrow">Enquire</span>
+      <h2>Plan your workshop</h2>
+      <p class="prose">Tell us about your group, the date you have in mind and where you are. We'll come back to you with options and a quote.</p>
+    </div>
+    {% set enquiryType = "Workshop" %}{% set enquiryId = "workshop" %}{% set enquiryDate = true %}
+    {% set enquiryTitle = "Workshop enquiry" %}
+    {% set enquiryTopics = ["Corporate workshop", "SEN workshop", "Care home workshop", "School workshop", "Something else"] %}
+    {% include "enquiry-form.njk" %}
+  </div>
+</section>

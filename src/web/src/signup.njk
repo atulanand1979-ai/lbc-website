@@ -1,0 +1,99 @@
+---
+layout: layouts/base.njk
+title: Sign Up
+permalink: /signup/
+description: Join a weekly Bhangra class — Pay As You Go from £7.50 or monthly memberships from £25. Plus one-to-one coaching and private group sessions.
+scripts: ["/js/enquiry.js"]
+---
+<section class="page-hero">
+  <div class="container page-hero__inner">
+    <span class="eyebrow">Sign up</span>
+    <h1 class="h-page">Start your Bhangra journey</h1>
+    <p class="lead">Join a weekly class, choose a membership, or book personalised one-to-one and private group sessions.</p>
+    <div class="btn-row">
+      <a href="#classes" class="btn btn--yellow">Group classes &amp; memberships</a>
+      <a href="#one-to-one" class="btn btn--ghost-light">One-to-one</a>
+      <a href="#private-group" class="btn btn--ghost-light">Private group</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="classes">
+  <div class="container section__inner">
+    <div class="section__head">
+      <span class="eyebrow">Group classes</span>
+      <h2>Classes &amp; memberships</h2>
+      <div class="prose">
+        <p>Whether you're a complete beginner or an experienced dancer, our group classes are a great way to learn new moves, improve your skills, meet new people and experience the energy of Bhangra.</p>
+        <p>Join us at one of our <a href="/locations/">class locations</a> or choose a monthly membership to enjoy more classes and exclusive benefits. Members don't need to book — just turn up and give your name to the teacher.</p>
+      </div>
+    </div>
+    <div class="pricing">
+      <div class="price-card">
+        <span class="price-card__name">Pay As You Go</span>
+        <span><span class="price-card__price">£7.50</span> <span class="price-card__per">per class</span></span>
+        <p class="muted">Perfect for trying a class or attending occasionally.</p>
+        <ul class="checklist"><li>Choose your location and date</li><li>Pay online, no commitment</li></ul>
+        <a class="btn btn--yellow-outline" href="/book/">Book a class</a>
+      </div>
+      <div class="price-card">
+        <span class="price-card__name">Bronze</span>
+        <span><span class="price-card__price">£25</span> <span class="price-card__per">per month</span></span>
+        <p class="muted">Ideal for dancers who regularly attend their local classes.</p>
+        <ul class="checklist"><li>Unlimited Beginners classes within one city</li></ul>
+        <a class="btn btn--yellow-outline" href="/join/?tier=bronze">Choose Bronze</a>
+      </div>
+      <div class="price-card">
+        <span class="price-card__name">Silver</span>
+        <span><span class="price-card__price">£35</span> <span class="price-card__per">per month</span></span>
+        <p class="muted">More flexibility to train with us wherever our classes take place.</p>
+        <ul class="checklist"><li>Unlimited Beginners classes across all locations</li></ul>
+        <a class="btn btn--yellow-outline" href="/join/?tier=silver">Choose Silver</a>
+      </div>
+      <div class="price-card price-card--gold">
+        <span class="price-card__badge">Best value</span>
+        <span class="price-card__name hl">Gold</span>
+        <span><span class="price-card__price">£45</span> <span class="price-card__per">per month</span></span>
+        <p class="muted">Our premium membership with added perks.</p>
+        <ul class="checklist">
+          <li>Unlimited Beginners and advanced classes across all locations</li>
+          <li>Preferential base rates for events</li>
+          <li>Free personalised merchandise once per year</li>
+          <li>Access to exclusive merchandise</li>
+          <li>Automatic seat reservation for our end-of-year party</li>
+        </ul>
+        <a class="btn btn--yellow" href="/join/?tier=gold">Choose Gold</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--cream" id="one-to-one">
+  <div class="container section__inner">
+    <div class="section__head"><span class="eyebrow">One-to-one</span><h2>Personal Bhangra coaching</h2></div>
+    <div class="grid grid--narrow">
+      <div class="card card--cream"><h3>Wedding First Dance</h3><p>Make your special day even more memorable with a personalised Bhangra wedding routine. Whether you want something romantic, energetic or full of Punjabi flair, we'll work with you and your partner to create a routine that suits your music, style and confidence level. We'll help you feel prepared and ready to enjoy your moment on the dance floor.</p></div>
+      <div class="card card--cream"><h3>Complete Beginners</h3><p>Think you have two left feet? Don't worry — we're here to help! Our one-to-one lessons are perfect for anyone who wants to learn Bhangra from scratch in a relaxed, supportive environment. Build your confidence, learn the basics and progress at your own pace, regardless of your age or previous dance experience.</p></div>
+      <div class="card card--cream"><h3>Competition-Level Training</h3><p>Ready to take your Bhangra skills to the next level? Our advanced one-to-one sessions offer personalised coaching tailored to your goals. Work on technique, precision, stamina, performance quality and stage presence to help you prepare for competitions and improve your overall dancing ability.</p></div>
+      <div class="card card--cream"><h3>Learn Your Way</h3><p>All one-to-one sessions can take place in the comfort of your own home or at one of our studios, depending on your preference and availability. Enjoy personalised guidance in an environment where you feel comfortable.</p></div>
+    </div>
+    {% set enquiryType = "OneToOne" %}{% set enquiryId = "one2one" %}{% set enquiryDate = true %}
+    {% set enquiryTitle = "Book a one-to-one" %}
+    {% set enquiryTopics = ["Wedding First Dance", "Complete Beginners", "Competition-Level Training", "Not sure yet"] %}
+    {% include "enquiry-form.njk" %}
+  </div>
+</section>
+
+<section class="section" id="private-group">
+  <div class="container section__inner">
+    <div class="section__head"><span class="eyebrow">Private group</span><h2>Sessions for your family &amp; friends</h2></div>
+    <div class="grid grid--wide">
+      <div class="card card--feature"><h3>Wedding Routines</h3><p>Get the whole family involved and create a wedding performance to remember! From parents and siblings to cousins and friends, we can choreograph a fun, coordinated Bhangra routine that brings everyone together. Whether you're planning a surprise performance or a full family dance, we'll help make it a special part of your celebration.</p></div>
+      <div class="card card--feature"><h3>Family Fitness Classes</h3><p>Turn family time into an energetic and enjoyable activity! We bring Bhangra to your home, teaching the whole family simple dance steps and lively routines that get everyone moving. Our family sessions combine music, movement and togetherness, making them a fun way to enjoy cardio-style exercise while learning something new as a family.</p></div>
+    </div>
+    {% set enquiryType = "PrivateGroup" %}{% set enquiryId = "private" %}{% set enquiryDate = true %}
+    {% set enquiryTitle = "Enquire about a private group" %}
+    {% set enquiryTopics = ["Wedding Routines", "Family Fitness Classes", "Something else"] %}
+    {% include "enquiry-form.njk" %}
+  </div>
+</section>

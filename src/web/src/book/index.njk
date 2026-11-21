@@ -1,0 +1,53 @@
+---
+layout: layouts/base.njk
+title: Book a Class
+permalink: /book/
+description: Book a Pay As You Go Bhangra class — choose your location, class and date, then pay online.
+scripts: ["/js/book.js"]
+---
+<section class="page-hero">
+  <div class="container page-hero__inner">
+    <span class="eyebrow">Pay As You Go</span>
+    <h1 class="h-page">Book a class</h1>
+    <p class="lead">Choose a location and date, pay online, then just give your name at the door. Members don't need to book.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <form id="book-form" class="form steps" novalidate>
+      <div class="alert" data-message hidden></div>
+
+      <fieldset class="step" style="border:0;padding:0;margin:0">
+        <legend class="step__title"><span class="step__num">1</span>Choose a location</legend>
+        <div class="options" id="venue-options"><p class="muted">Loading locations…</p></div>
+      </fieldset>
+
+      <fieldset class="step" id="step-class" hidden style="border:0;padding:0;margin:0">
+        <legend class="step__title"><span class="step__num">2</span>Choose a class</legend>
+        <div class="options" id="class-options"></div>
+      </fieldset>
+
+      <fieldset class="step" id="step-date" hidden style="border:0;padding:0;margin:0">
+        <legend class="step__title"><span class="step__num">3</span>Choose a date</legend>
+        <div class="options" id="date-options"></div>
+      </fieldset>
+
+      <fieldset class="step form-panel" id="step-details" hidden style="margin:0">
+        <legend class="step__title"><span class="step__num">4</span>Your details</legend>
+        <div class="form">
+          <div class="summary" id="book-summary"></div>
+          <div class="form__row">
+            <div class="field"><label for="b-name">Full name</label><input id="b-name" name="name" autocomplete="name" required></div>
+            <div class="field"><label for="b-email">Email</label><input id="b-email" name="email" type="email" autocomplete="email" required>
+              <span class="field__hint">We'll email your confirmation and a link to create your account.</span></div>
+          </div>
+          <div class="field" style="max-width:420px"><label for="b-phone">Mobile number</label><input id="b-phone" name="phone" type="tel" autocomplete="tel" required></div>
+          <div data-captcha></div>
+          <p class="small muted">Bookings can't be cancelled or refunded.</p>
+          <div><button class="btn btn--yellow-outline" type="submit">Continue to payment</button></div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</section>

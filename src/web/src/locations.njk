@@ -1,0 +1,36 @@
+---
+layout: layouts/base.njk
+title: Our Locations
+permalink: /locations/
+description: Weekly Bhangra classes in Leicester, Coventry, Nottingham, Northampton, Kettering, Bedford, Wolverhampton and Derby. Find your nearest class.
+scripts: ["/js/locations.js"]
+---
+<section class="page-hero">
+  <div class="container page-hero__inner">
+    <span class="eyebrow">Our locations</span>
+    <h1 class="h-page">Find your nearest class</h1>
+    <p class="lead">Weekly classes in 8 cities across England. Beginners always welcome — no partner or experience needed.</p>
+    <div class="btn-row"><a href="/book/" class="btn btn--yellow">Book a class — Pay As You Go</a><a href="/signup/#classes" class="btn btn--ghost-light">View memberships</a></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    {# Built from _data/venues.json for search engines; replaced at runtime with live data the admin manages. #}
+    <div class="grid" data-venues>
+      {% for v in venues %}
+      <article class="venue-card" id="{{ v.slug }}">
+        <span class="venue-card__city">{{ v.city }}</span>
+        {% if v.soon %}<span class="venue-card__soon">{{ v.soon }}</span>{% endif %}
+        <span class="venue-card__day">{{ v.day }}</span>
+        <ul class="venue-card__classes">{% for c in v.classes %}<li>{{ c }}</li>{% endfor %}</ul>
+        <p class="venue-card__address">{{ v.name }}<br>{{ v.address }}, {{ v.postcode }}</p>
+        <div class="btn-row">
+          <a class="btn btn--yellow-outline btn--small" href="/book/?venue={{ v.slug }}">Book a class</a>
+          <a class="btn btn--small" href="https://www.google.com/maps/search/?api=1&query={{ (v.name + ', ' + v.address + ', ' + v.postcode) | urlencode }}" target="_blank" rel="noopener">Map</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>

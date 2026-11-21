@@ -1,0 +1,39 @@
+---
+layout: layouts/base.njk
+title: Charity Work
+permalink: /charity/
+description: Our annual charity hike, end-of-year Dinner and Dance, and the charities Leicester Bhangra Classes has supported — up to £90,000 raised.
+---
+<section class="page-hero">
+  <div class="container page-hero__inner">
+    <span class="eyebrow">Charity work</span>
+    <h1 class="h-page">Dancing for a good cause</h1>
+    <p class="lead">Up to £90,000 raised for charities, with monthly charity classes across our locations.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container grid grid--wide">
+    <article class="card card--feature" id="hike">
+      <div class="ph ph--light ph--card">Photo: Annual charity hike</div>
+      <h2>Annual Hike</h2>
+      {# CLIENT TO CONFIRM: amount raised for Khalsa Aid ("AMAN ADD THE AMOUNT HERE" in the content document). #}
+      <p>Every year we do a hike for a charity. Last year we worked with Khalsa Aid and raised <b>[AMOUNT TO BE CONFIRMED]</b>.</p>
+    </article>
+    <article class="card card--feature" id="dinner-and-dance">
+      <div class="ph ph--light ph--card">Photo: Dinner and Dance</div>
+      <h2>Dinner and Dance</h2>
+      <p>Our end of year party is the highlight of our year, where teachers and students come together to enjoy the night. Tickets for this get sold within 15 minutes of release time — so you have to be fast!</p>
+      <p class="card__perfect">Gold members get an automatic seat reservation. <a href="/signup/#classes">See memberships</a></p>
+    </article>
+  </div>
+</section>
+
+<section class="section section--cream" id="charities">
+  <div class="container section__inner">
+    <div class="section__head"><span class="eyebrow">Charities</span><h2>Charities we've worked with over the years</h2></div>
+    <ul class="logo-wall">
+      {% for c in ["Khalsa Aid", "The Bridge Charity", "Alex Wish", "Charity Link", "Lamp Charity", "Zinthiya Charity", "BNI", "Apanapan", "Royal Papworth Hospital", "Menphess", "Midlands Langar Seva", "Accommodation Concern", "Cancer Research", "Cransley Hospice", "Open Kitchen", "Muslim Hands", "Washing Machine", "CoppaFeel!", "Movember", "UHCW Neonatal Ward", "Falcon", "Mind", "Red Nose Day", "Home-Start", "Cardiac Risk in the Young (CRY)", "Faces", "Hope Against Cancer", "Ramadan Food Parcel Appeal", "The Haven Wolverhampton", "Alzheimer's Society"] %}<li>{{ c }}</li>{% endfor %}
+    </ul>
+  </div>
+</section>

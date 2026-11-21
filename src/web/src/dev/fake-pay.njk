@@ -1,0 +1,19 @@
+---
+layout: layouts/base.njk
+title: Test Payment
+permalink: /dev/fake-pay.html
+noindex: true
+scripts: ["/js/fake-pay.js"]
+---
+{# Development only: stands in for a payment provider's hosted checkout when Payments:Provider = Fake.
+   The API endpoint it calls returns 404 for any other provider, so this page is inert in production. #}
+<section class="section">
+  <div class="container prose section__head">
+    <span class="eyebrow">Test mode</span>
+    <h1 style="font-size:clamp(36px,5vw,56px)">Fake checkout</h1>
+    <p class="alert alert--info">No real payment provider is connected. This page simulates one so the booking and membership flows can be tested end to end.</p>
+    <div class="summary"><span id="fp-desc"></span><span class="summary__price" id="fp-amount"></span></div>
+    <div class="btn-row" id="fp-buttons"></div>
+    <p class="alert" id="fp-msg" hidden></p>
+  </div>
+</section>

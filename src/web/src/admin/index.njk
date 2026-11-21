@@ -1,0 +1,57 @@
+---
+layout: layouts/base.njk
+title: Admin
+permalink: /admin/
+noindex: true
+scripts: ["/js/admin.js"]
+---
+<section class="section">
+  <div class="container">
+    <p id="admin-denied" class="alert alert--error" hidden>You need an admin account to see this page.</p>
+
+    <div id="admin" class="section__inner" hidden>
+      <div class="section__head"><span class="eyebrow">Admin</span><h1 style="font-size:clamp(40px,6vw,64px)">Manage LBC</h1></div>
+      <div class="tabs" role="tablist">
+        <button role="tab" data-tab="places" aria-selected="true">Places &amp; classes</button>
+        <button role="tab" data-tab="register">Class register</button>
+        <button role="tab" data-tab="members">Members</button>
+        <button role="tab" data-tab="enquiries">Enquiries</button>
+      </div>
+
+      <div id="tab-places" role="tabpanel" class="section__inner" style="gap:20px">
+        <div class="section__head section__head--split">
+          <div><p class="prose muted">Add each place where classes run, then add its weekly classes (e.g. every Monday 7pm–8pm). These drive the booking page, the locations page and Bronze membership.</p></div>
+          <button class="btn btn--yellow-outline" id="add-venue" type="button">+ Add a place</button>
+        </div>
+        <div id="seed-box" class="alert alert--info" hidden>
+          No places yet. <button class="btn btn--small" id="seed-venues" type="button">Load the 8 places from the content document</button>
+        </div>
+        <div id="places-list" class="section__inner" style="gap:20px"></div>
+      </div>
+
+      <div id="tab-register" role="tabpanel" hidden class="section__inner" style="gap:20px">
+        <form id="register-form" class="toolbar">
+          <div class="field"><label for="r-venue">Place</label><select id="r-venue" name="venue"></select></div>
+          <div class="field"><label for="r-date">Date</label><input id="r-date" name="date" type="date" required></div>
+          <button class="btn btn--black" type="submit">Show register</button>
+        </form>
+        <div id="register-out"></div>
+      </div>
+
+      <div id="tab-members" role="tabpanel" hidden class="section__inner" style="gap:20px">
+        <form id="members-filter" class="toolbar">
+          <div class="field"><label for="m-q">Search</label><input id="m-q" name="q" placeholder="Name or email"></div>
+          <div class="field"><label for="m-tier">Tier</label><select id="m-tier" name="tier"><option value="">All</option><option>Bronze</option><option>Silver</option><option>Gold</option></select></div>
+          <div class="field"><label for="m-status">Status</label><select id="m-status" name="status"><option value="">All</option><option>Active</option><option value="PastDue">Payment overdue</option><option>Cancelled</option></select></div>
+        </form>
+        <p id="members-summary" class="muted"></p>
+        <div id="members-out"></div>
+      </div>
+
+      <div id="tab-enquiries" role="tabpanel" hidden>
+        <div id="enquiries-out"></div>
+      </div>
+    </div>
+  </div>
+</section>
+<dialog id="admin-dialog"></dialog>

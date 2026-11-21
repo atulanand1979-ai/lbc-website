@@ -1,0 +1,71 @@
+---
+layout: layouts/base.njk
+title: Book Us
+permalink: /book-us/
+description: Book Bhangra dancers for weddings, Jaggo celebrations, corporate events, charity events, parties and music video shoots.
+scripts: ["/js/enquiry.js"]
+---
+<section class="page-hero">
+  <div class="container page-hero__inner">
+    <span class="eyebrow">Book us</span>
+    <h1 class="h-page">Bring the Bhangra energy to your event</h1>
+    <p class="lead">Looking to add something unique, exciting and memorable to your event? Leicester Bhangra Classes brings the vibrant energy of Bhangra to celebrations, performances and special occasions. Whether you're planning an intimate gathering or a large-scale event, we can help create an unforgettable experience through dance, music and Punjabi culture.</p>
+    <div class="btn-row"><a href="#enquire" class="btn btn--yellow">Check availability</a></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container section__inner">
+    <div class="section__head"><span class="eyebrow">Events we perform at</span><h2>Choose your occasion</h2></div>
+    <div class="grid">
+      {% for e in [
+        ["Charity Events", "Make your charity event stand out with an energetic Bhangra performance or interactive dance workshop. We love helping bring communities together, creating an engaging atmosphere and adding a cultural touch to fundraising events, community celebrations and awareness campaigns."],
+        ["Weddings", "Add excitement to your big day with a lively Bhangra performance that gets everyone in the celebratory spirit! From welcoming guests to entertaining your audience and creating a memorable highlight for your reception, we can help bring Punjabi tradition and entertainment to your wedding celebrations."],
+        ["Music Video Shoots", "Bring your creative vision to life with dynamic Bhangra dancers for your next music video or filming project. Whether you're looking for coordinated choreography, energetic background dancers or an authentic Punjabi dance atmosphere, we can work with your production team to complement your music and vision."],
+        ["Corporate Events", "Give your corporate event something different with the colour, rhythm and excitement of Bhangra. Our performances and interactive sessions are ideal for company celebrations, awards evenings, cultural events, staff parties and team-building experiences. We bring people together through an engaging celebration of dance and culture."],
+        ["Jaggo Celebrations", "Celebrate one of the most vibrant Punjabi wedding traditions with an unforgettable Jaggo experience! Bring family and friends together for a night filled with dhol beats, dancing and Punjabi spirit. We can help add energy and excitement to your Jaggo celebrations, making it a night everyone will remember."],
+        ["Parties & Private Celebrations", "Make your party one to remember with a burst of Bhangra energy! Whether it's a birthday, anniversary, engagement or private celebration, our performances can get guests excited and bring everyone together. Want to get your guests involved? We can also add interactive dance elements to make the experience even more fun."]
+      ] %}
+      <article class="card">
+        <div class="ph ph--light ph--card">Photo: {{ e[0] }}</div>
+        <h3>{{ e[0] }}</h3>
+        <p>{{ e[1] }}</p>
+        <a class="link-card__more" href="#enquire">Check availability →</a>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section--dark">
+  <div class="container section__inner">
+    <div class="section__head"><span class="eyebrow">Music videos</span><h2>Artists we've worked with</h2></div>
+    <ul class="chips">
+      {% for a in ["Satinder Sartaaj", "Miss Pooja", "Ranjit Bawa", "Nimal Sidhu", "Lembar", "Channi Ranta", "Inderpal Moga", "Dr Zuz", "Black Magic", "JK", "Foji Gill", "Virdi Mazaria", "Jus Ritz", "Jazzy B"] %}<li>{{ a }}</li>{% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="section section--cream">
+  <div class="container section__inner">
+    <div class="section__head"><span class="eyebrow">Trusted by</span><h2>Brands, schools &amp; organisations we've worked with</h2></div>
+    <ul class="logo-wall">
+      {% for o in ["BBC", "Sky", "BBC Radio Leicester", "BBC Asian Network", "John Lewis", "Commonwealth Games", "The Apprentice", "Caterpillars Limited", "Parmar Collection", "The Grand Hotel", "University of Leicester", "Fosse Park", "Warwick University", "Wicksteed Park", "Very", "Experience", "Aldi", "RS Components UK", "Coventry County", "Loughborough University", "Leicester City Council", "Marriott", "Feast India", "Lion Hearts Trust", "Avanti Fields School", "Barchester", "Braunstone Community Primary School", "Department for Work and Pensions"] %}<li>{{ o }}</li>{% endfor %}
+    </ul>
+    <p class="small muted">Logos to be added once supplied.</p>
+  </div>
+</section>
+
+<section class="section" id="enquire">
+  <div class="container split">
+    <div class="section__head">
+      <span class="eyebrow">Check availability</span>
+      <h2>Tell us about your event</h2>
+      <p class="prose">Share the date, venue and the kind of performance you'd like, and we'll confirm availability and a quote.</p>
+    </div>
+    {% set enquiryType = "BookUs" %}{% set enquiryId = "bookus" %}{% set enquiryDate = true %}
+    {% set enquiryTitle = "Event enquiry" %}
+    {% set enquiryTopics = ["Wedding", "Jaggo", "Corporate event", "Charity event", "Music video shoot", "Party / private celebration", "Something else"] %}
+    {% include "enquiry-form.njk" %}
+  </div>
+</section>

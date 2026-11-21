@@ -1,0 +1,26 @@
+# Local dev: Azurite (Table Storage) + the Functions API on http://localhost:7071.
+# Run the website with:  swa start src/web/_site --api-devserver-url http://localhost:7071
+services:
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:3.35.0
+    command: azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --skipApiVersionCheck --loose
+    ports: ["10000:10000", "10001:10001", "10002:10002"]
+    volumes: ["azurite-data:/data"]
+
+  api:
+    build: { context: ., dockerfile: src/api/Dockerfile }
+    ports: ["7071:80"]
+    depends_on: [azurite]
+    environment:
+      AzureWebJobsStorage: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;"
+      TABLES_CONNECTION_STRING: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://azurite:10002/devstoreaccount1;"
+      ADMIN_BOOTSTRAP_KEY: "local-dev-bootstrap-key-change-me"
+      Site__BaseUrl: "http://localhost:4280"
+      Site__AdminEmail: "info@leicesterbhangraclasses.co.uk"
+      Jwt__SigningKey: "local-dev-signing-key-not-for-production-0123456789"
+      Payments__Provider: "Fake"
+      Payments__FakeWebhookSecret: "local-dev-fake-webhook-secret"
+      Smtp__Mode: "Log"
+
+volumes:
+  azurite-data:

@@ -1,0 +1,27 @@
+---
+layout: layouts/base.njk
+title: My Account
+permalink: /account/
+noindex: true
+scripts: ["/js/account.js"]
+---
+<section class="section">
+  <div class="container section__inner">
+    <div id="login-panel" hidden>
+      <div class="split" style="align-items:flex-start">
+        <div class="section__head">
+          <span class="eyebrow">My account</span>
+          <h1 style="font-size:clamp(40px,6vw,64px)">Sign in</h1>
+          <p class="prose">See your membership and upcoming classes. First time here? Use the link in your booking or membership email to create your password, or <a href="/account/forgot.html">request a new link</a>.</p>
+        </div>
+        <form id="login-form" class="form form-panel" novalidate>
+          <div class="field"><label for="l-email">Email</label><input id="l-email" name="email" type="email" autocomplete="username" required></div>
+          <div class="field"><label for="l-password">Password</label><input id="l-password" name="password" type="password" autocomplete="current-password" required></div>
+          <div class="alert" data-message hidden></div>
+          <div class="btn-row"><button class="btn btn--yellow-outline" type="submit">Sign in</button><a class="btn" href="/account/forgot.html">Forgotten password?</a></div>
+        </form>
+      </div>
+    </div>
+    <div id="account-panel" class="section__inner" hidden><p class="muted">Loading…</p></div>
+  </div>
+</section>

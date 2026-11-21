@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Lbc.Core/Lbc.Core.csproj" />
+    <Project Path="src/Lbc.Infrastructure/Lbc.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/api/">
+    <Project Path="src/api/Lbc.Api/Lbc.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Lbc.Tests/Lbc.Tests.csproj" />
+  </Folder>
+</Solution>

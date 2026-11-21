@@ -1,0 +1,10 @@
+[
+  { "slug": "bedford", "city": "Bedford", "day": "Monday", "classes": ["Beginners: 7pm – 8pm"], "name": "Addison Centre", "address": "Bedford Rd, Kempston", "postcode": "MK42 8PN" },
+  { "slug": "northampton", "city": "Northampton", "day": "Monday", "classes": ["Beginners: 7pm – 8pm"], "name": "Northampton High School", "address": "Hardingstone", "postcode": "NN4 6UU" },
+  { "slug": "leicester", "city": "Leicester", "day": "Tuesday", "classes": ["Beginners: 7pm – 8pm", "Intermediate: 8pm – 9pm"], "name": "Avanti Fields School", "address": "21 Furrow View", "postcode": "LE5 0BX" },
+  { "slug": "nottingham", "city": "Nottingham", "day": "Wednesday", "classes": ["Beginners: 7pm – 8pm"], "name": "The Vine Community Centre", "address": "Abbey Rd", "postcode": "NG7 5GZ" },
+  { "slug": "kettering", "city": "Kettering", "day": "Wednesday", "classes": ["Beginners: 7pm – 8pm"], "name": "Kettering Science Academy", "address": "Deeble Rd", "postcode": "NN15 7AA" },
+  { "slug": "coventry", "city": "Coventry", "day": "Thursday", "classes": ["Beginners: 7pm – 8pm", "Intermediate: 8pm – 9pm"], "name": "Meadow Park School", "address": "Abbey Rd", "postcode": "CV3 4BD" },
+  { "slug": "wolverhampton", "city": "Wolverhampton", "day": "Thursday", "classes": ["Beginners: 7pm – 8pm"], "name": "Dormston School", "address": "Mill Bank, Sedgley", "postcode": "DY3 1SN" },
+  { "slug": "derby", "city": "Derby", "day": "Thursday", "classes": ["Beginners: 7pm – 8pm"], "name": "Derby Moor Spencer Academy", "address": "Moorway Lane, Littleover", "postcode": "DE23 2FS", "soon": "Starting in February" }
+]

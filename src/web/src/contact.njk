@@ -1,0 +1,37 @@
+---
+layout: layouts/base.njk
+title: Contact Us
+permalink: /contact/
+description: Questions about classes, workshops or booking us for your event? Get in touch with Leicester Bhangra Classes.
+scripts: ["/js/enquiry.js"]
+---
+<section class="page-hero">
+  <div class="container page-hero__inner">
+    <span class="eyebrow">Contact us</span>
+    <h1 class="h-page">Let's get you dancing</h1>
+    <p class="lead">Questions about classes, workshops or booking us for your event? Get in touch and the team will come back to you.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container split" style="align-items:flex-start">
+    {% set enquiryType = "Contact" %}{% set enquiryId = "contact" %}{% set enquiryDate = true %}
+    {% set enquiryTitle = "Send us a message" %}
+    {% set enquiryTopics = ["Joining a class", "Membership", "Workshops", "Book us for an event", "One-to-one / private group", "Something else"] %}
+    {% include "enquiry-form.njk" %}
+    <div class="section__inner" style="gap:24px">
+      <div class="card card--feature">
+        <h3>Call the office</h3>
+        <p><a href="{{ site.phoneHref }}"><b>{{ site.phone }}</b></a></p>
+      </div>
+      <div class="card card--feature">
+        <h3>Email us</h3>
+        <p><a href="mailto:{{ site.email }}" style="overflow-wrap:anywhere"><b>{{ site.email }}</b></a></p>
+      </div>
+      <div class="card">
+        <h3>Classes in</h3>
+        <ul class="chips">{% for v in venues %}<li><a href="/locations/#{{ v.slug }}" style="text-decoration:none">{{ v.city }}</a></li>{% endfor %}</ul>
+      </div>
+    </div>
+  </div>
+</section>

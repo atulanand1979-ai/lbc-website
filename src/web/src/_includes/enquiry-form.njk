@@ -1,0 +1,20 @@
+{# Set before including: enquiryType, enquiryTopics (array), enquiryTitle, enquiryDate (bool), enquiryId #}
+<form class="form form-panel" data-enquiry="{{ enquiryType }}" id="{{ enquiryId or 'enquiry' }}" novalidate>
+  <h3>{{ enquiryTitle or "Send us a message" }}</h3>
+  <div class="form__row">
+    <div class="field"><label for="{{ enquiryId }}-name">Name</label><input id="{{ enquiryId }}-name" name="name" autocomplete="name" required></div>
+    <div class="field"><label for="{{ enquiryId }}-email">Email</label><input id="{{ enquiryId }}-email" name="email" type="email" autocomplete="email" required></div>
+  </div>
+  <div class="form__row">
+    <div class="field"><label for="{{ enquiryId }}-phone">Phone</label><input id="{{ enquiryId }}-phone" name="phone" type="tel" autocomplete="tel"></div>
+    {% if enquiryDate %}<div class="field"><label for="{{ enquiryId }}-date">Event date (if known)</label><input id="{{ enquiryId }}-date" name="eventDate" type="date"></div>{% endif %}
+  </div>
+  {% if enquiryTopics %}
+  <div class="field"><label for="{{ enquiryId }}-topic">What's it about?</label>
+    <select id="{{ enquiryId }}-topic" name="topic">{% for t in enquiryTopics %}<option>{{ t }}</option>{% endfor %}</select></div>
+  {% endif %}
+  <div class="field"><label for="{{ enquiryId }}-msg">Message</label><textarea id="{{ enquiryId }}-msg" name="message" rows="5" required placeholder="Tell us a little about what you're looking for — numbers, location, ideas…"></textarea></div>
+  <div data-captcha></div>
+  <div class="alert" data-message hidden></div>
+  <div><button class="btn btn--yellow-outline" type="submit">Send enquiry</button></div>
+</form>

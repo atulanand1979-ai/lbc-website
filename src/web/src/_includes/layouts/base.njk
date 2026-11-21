@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }} · {{ site.name }}</title>
+<meta name="description" content="{{ description or site.tagline }}">
+{% if noindex %}<meta name="robots" content="noindex">{% endif %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="/css/site.css">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="topbar">
+    <div class="container topbar__inner">
+      <span>{{ site.strapline }}</span>
+      <span class="topbar__contact">
+        <a href="{{ site.phoneHref }}">{{ site.phone }}</a>
+        <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+      </span>
+    </div>
+  </div>
+  <div class="container masthead">
+    <a href="/" class="brand" aria-label="{{ site.name }} home">
+      <span class="brand__badge">LBC</span>
+      <span class="brand__text"><span class="brand__name">Leicester Bhangra</span><span class="brand__sub">Classes</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav">
+      <span class="nav-toggle__bars" aria-hidden="true"></span><span class="sr-only">Menu</span>
+    </button>
+    <nav id="main-nav" class="main-nav" aria-label="Main">
+      {% for item in site.nav %}
+      <a href="{{ item.url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.label }}</a>
+      {% endfor %}
+      <a href="/account/" class="main-nav__account" data-account-link>My account</a>
+    </nav>
+    <a href="/signup/#classes" class="btn btn--yellow masthead__cta">Join a Class</a>
+  </div>
+</header>
+
+<main id="main">
+{{ content | safe }}
+</main>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div class="site-footer__cols">
+      <div class="site-footer__brand">
+        <span class="site-footer__logo">Leicester Bhangra <span class="hl">Classes</span></span>
+        <p>{{ site.tagline }}</p>
+        <div class="social">
+          {% for s in site.social %}
+          {% if s.url %}<a href="{{ s.url }}" rel="noopener">{{ s.label }}</a>{% else %}<span class="social__todo" title="{{ s.todo }}">{{ s.label }}</span>{% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <div class="site-footer__col">
+        <h3>Explore</h3>
+        {% for item in site.nav %}{% if item.url != "/" %}<a href="{{ item.url }}">{{ item.label }}</a>{% endif %}{% endfor %}
+      </div>
+      <div class="site-footer__col">
+        <h3>Our locations</h3>
+        {% for c in site.cities %}<a href="/locations/#{{ c | slugify }}">{{ c }}</a>{% endfor %}
+      </div>
+      <div class="site-footer__col">
+        <h3>Get in touch</h3>
+        <a href="{{ site.phoneHref }}">{{ site.phone }}</a>
+        <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+        <a href="/account/">My account</a>
+      </div>
+    </div>
+    <div class="site-footer__legal">
+      <span>© {{ "" | year }} {{ site.legalName }}. All rights reserved.</span>
+      <span>{{ site.founded }}</span>
+    </div>
+  </div>
+</footer>
+<script src="/js/site.js" defer></script>
+{% for s in scripts %}<script src="{{ s }}" type="module"></script>
+{% endfor %}
+</body>
+</html>

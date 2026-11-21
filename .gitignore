@@ -1,0 +1,13 @@
+bin/
+obj/
+*.user
+.vs/
+.vscode/*
+!.vscode/extensions.json
+node_modules/
+src/web/_site/
+local.settings.json
+__azurite_db_*
+__blobstorage__/
+__queuestorage__/
+TestResults/

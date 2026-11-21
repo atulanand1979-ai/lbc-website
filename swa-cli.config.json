@@ -1,0 +1,14 @@
+{
+  "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
+  "configurations": {
+    "lbc": {
+      "appLocation": "src/web",
+      "outputLocation": "_site",
+      "appBuildCommand": "npm run build",
+      "apiLocation": "src/api/Lbc.Api",
+      "apiLanguage": "dotnetisolated",
+      "apiVersion": "10.0",
+      "apiDevserverUrl": "http://localhost:7071"
+    }
+  }
+}

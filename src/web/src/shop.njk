@@ -1,0 +1,26 @@
+---
+layout: layouts/base.njk
+title: Bhangra Shop
+permalink: /shop/
+description: Official Leicester Bhangra Classes merchandise.
+---
+<section class="page-hero">
+  <div class="container page-hero__inner">
+    <span class="eyebrow">Bhangra shop</span>
+    <h1 class="h-page">Rep the LBC family</h1>
+    <p class="lead">Our online shop is coming soon. In the meantime, ask your teacher about merchandise at your next class.</p>
+    <div class="btn-row"><a class="btn btn--yellow" href="/join/?tier=gold">Become a Gold member</a></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container section__inner">
+    <div class="section__head"><span class="eyebrow">Official merchandise</span><h2>Coming soon</h2></div>
+    <div class="grid grid--narrow">
+      {% for i in [1, 2, 3, 4] %}
+      <div class="card"><div class="ph ph--light ph--card">Photo: LBC merch item</div><b>[PRODUCT NAME]</b><span class="muted">£[PRICE]</span></div>
+      {% endfor %}
+    </div>
+    <p class="alert alert--info">Gold members get free personalised merchandise once a year and access to exclusive merchandise.</p>
+  </div>
+</section>

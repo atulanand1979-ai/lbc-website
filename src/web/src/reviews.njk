@@ -1,0 +1,64 @@
+---
+layout: layouts/base.njk
+title: Reviews & Press
+permalink: /reviews/
+description: What our students say, plus Leicester Bhangra Classes in the news, on TV and online.
+---
+<section class="page-hero">
+  <div class="container page-hero__inner">
+    <span class="eyebrow">Reviews &amp; press</span>
+    <h1 class="h-page">Loved by 1,000+ dancers a month</h1>
+    <p class="lead">Hear from our students, and see where Leicester Bhangra Classes has featured in the press, on TV and online.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container section__inner">
+    <div class="section__head"><span class="eyebrow">Student reviews</span><h2>What our students say</h2></div>
+    <div class="grid">
+      {% for i in [1, 2, 3] %}
+      <figure class="card" style="margin:0">
+        <span aria-label="5 out of 5 stars" style="color:#C9A200;font-size:22px">★★★★★</span>
+        <blockquote style="margin:0;font-weight:600">[ADD STUDENT REVIEW — a short quote in their own words]</blockquote>
+        <figcaption class="muted">[Name] · [City] class</figcaption>
+      </figure>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section--cream">
+  <div class="container section__inner">
+    <div class="section__head"><span class="eyebrow">Media &amp; press</span><h2>In the news</h2></div>
+    <div class="grid">
+      {% for p in [
+        ["Bedford Today", "Watch: Bhangra folk dance and fitness classes coming to Bedford", "https://www.bedfordtoday.co.uk/news/people/watch-bhangra-folk-dance-and-fitness-classes-coming-to-bedford-4649051"],
+        ["Coventry Telegraph", "Thousands raised for Cancer Research", "https://www.coventrytelegraph.net/news/coventry-news/thousands-raised-cancer-research-bbc-29069350"],
+        ["Bedford Today", "Bedford Bhangra Classes hosts charity event for Comic Relief", "https://www.bedfordtoday.co.uk/arts-and-culture/bedford-bhangra-classes-hosts-charity-event-for-comic-relief-join-the-celebration-5028245"],
+        ["Northants Telegraph", "Kettering Bhangra class to support Cransley Hospice with charity dance session", "https://www.northantstelegraph.co.uk/news/people/kettering-bhangra-class-to-support-cransley-hospice-with-charity-dance-session-4635870"]
+      ] %}
+      <a class="card press-card" href="{{ p[2] }}" target="_blank" rel="noopener">
+        <span class="press-card__source">{{ p[0] }}</span>
+        <span class="press-card__title">{{ p[1] }}</span>
+        <span class="link-card__more">Read article →</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container section__inner">
+    <div class="section__head"><span class="eyebrow">Watch</span><h2>Videos &amp; reels</h2></div>
+    <div class="grid">
+      {% for id in ["-WHJtLvUiXM", "DWKwiQDpmr8", "oBrOeBgjkl8", "7d5eVyTaPCU", "3UEbLog3XpU"] %}
+      <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/{{ id }}" title="Leicester Bhangra Classes video {{ loop.index }}" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+      {% endfor %}
+    </div>
+    <div class="btn-row">
+      <a class="btn" href="https://www.instagram.com/p/CrnI6NTMs6G/" target="_blank" rel="noopener">Instagram post</a>
+      <a class="btn" href="https://www.instagram.com/reel/CrD_hJwo6Q4/" target="_blank" rel="noopener">Instagram reel</a>
+      <a class="btn" href="https://www.instagram.com/reel/CtdVF8SNSAH/" target="_blank" rel="noopener">Instagram reel</a>
+    </div>
+  </div>
+</section>
