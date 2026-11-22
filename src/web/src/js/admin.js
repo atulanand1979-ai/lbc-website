@@ -170,8 +170,8 @@ regForm.addEventListener("submit", async (e) => {
     const r = await api(`manage/register?venue=${encodeURIComponent(regForm.elements.venue.value)}&date=${regForm.elements.date.value}`);
     const classes = r.classes.length ? r.classes.map((c) => `
       <h3>${esc(c.class.label)}</h3>
-      ${c.payAsYouGo.length ? `<div class="table-wrap"><table class="data"><thead><tr><th>✓</th><th>Pay As You Go</th><th>Phone</th><th>Email</th></tr></thead><tbody>
-        ${c.payAsYouGo.map((b) => `<tr><td>☐</td><td><b>${esc(b.name)}</b></td><td>${esc(b.phone)}</td><td>${esc(b.email)}</td></tr>`).join("")}
+      ${c.payAsYouGo.length ? `<div class="table-wrap"><table class="data"><thead><tr><th>✓</th><th>Pay As You Go</th><th>Payment</th><th>Phone</th><th>Email</th></tr></thead><tbody>
+        ${c.payAsYouGo.map((b) => `<tr><td>☐</td><td><b>${esc(b.name)}</b></td><td>${b.status === "PayAtClass" ? `<b>Collect ${money(b.amountPence)}</b>` : "Paid online"}</td><td>${esc(b.phone)}</td><td>${esc(b.email)}</td></tr>`).join("")}
       </tbody></table></div>` : `<p class="muted">No Pay As You Go bookings.</p>`}`).join("")
       : `<p class="alert alert--info">No classes run in ${esc(r.venueCity)} on that day of the week.</p>`;
     const members = r.members.length ? `<div class="table-wrap"><table class="data"><thead><tr><th>✓</th><th>Member</th><th>Tier</th><th>Status</th><th>Phone</th></tr></thead><tbody>

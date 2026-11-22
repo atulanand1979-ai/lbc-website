@@ -1,6 +1,7 @@
 using Lbc.Core.Abstractions;
 using Lbc.Core.Domain;
 using Lbc.Core.Payments;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Lbc.Core.Services;
@@ -9,7 +10,10 @@ public sealed record PayAsYouGoRequest(string? VenueSlug, string? ClassId, strin
 
 public sealed record MembershipRequest(string? Tier, string? HomeVenueSlug, string? Name, string? Email, string? Phone);
 
-/// <summary>Creates pending bookings/memberships and hands the customer to the gateway's hosted checkout.</summary>
+/// <summary>
+/// Pay As You Go: confirms the booking straight away (customer pays at the class).
+/// Memberships: creates a pending membership and hands the customer to the gateway's hosted checkout.
+/// </summary>
 public sealed class CheckoutService(
     IVenueRepository venues,
     IClassRepository classes,
@@ -17,11 +21,13 @@ public sealed class CheckoutService(
     IMembershipRepository memberships,
     AccountService accounts,
     IPaymentGateway gateway,
+    IEmailSender email,
     IOptions<PricingOptions> pricing,
     IOptions<SiteOptions> site,
-    TimeProvider clock)
+    TimeProvider clock,
+    ILogger<CheckoutService> logger)
 {
-    public async Task<CheckoutSession> StartPayAsYouGoAsync(PayAsYouGoRequest r, CancellationToken ct = default)
+    public async Task<Booking> BookPayAsYouGoAsync(PayAsYouGoRequest r, CancellationToken ct = default)
     {
         var name = Guard.Required(r.Name, "Name", 100);
         var emailAddress = Guard.Email(r.Email);
@@ -34,7 +40,12 @@ public sealed class CheckoutService(
         if (!ScheduleCalculator.IsBookable(venue, schedule, date, UkTime.Now(clock), site.Value.BookableWeeksAhead))
             throw new ValidationException("That class date is no longer available. Please choose another date.");
 
-        await accounts.EnsureUserAsync(emailAddress, name, phone, ct);
+        var alreadyBooked = (await bookings.GetForSessionAsync(schedule.Id, date, ct))
+            .Any(b => b.Email == emailAddress && b.Status != BookingStatus.Pending);
+        if (alreadyBooked)
+            throw new ValidationException("You're already booked into this class on that date — see you there!");
+
+        var user = await accounts.EnsureUserAsync(emailAddress, name, phone, ct);
 
         var booking = new Booking
         {
@@ -45,20 +56,24 @@ public sealed class CheckoutService(
             Email = emailAddress,
             Name = name,
             Phone = phone,
+            Status = BookingStatus.PayAtClass,
             AmountPence = pricing.Value.PayAsYouGoPence,
             ClassLabel = $"{venue.City} – {ScheduleCalculator.Describe(schedule)}",
             CreatedAt = clock.GetUtcNow(),
         };
         await bookings.UpsertAsync(booking, ct);
 
-        var baseUrl = site.Value.BaseUrl.TrimEnd('/');
-        return await gateway.CreateOneOffCheckoutAsync(new OneOffPaymentRequest(
-            PaymentReference.ForBooking(booking.ClassId, booking.Date, booking.Id),
-            booking.AmountPence,
-            $"Bhangra class: {booking.ClassLabel}, {date:ddd d MMM yyyy}",
-            emailAddress, name,
-            SuccessUrl: $"{baseUrl}/book/success.html",
-            CancelUrl: $"{baseUrl}/book/?cancelled=1"), ct);
+        // The booking stands even if the email fails; the customer still sees the success page.
+        try
+        {
+            var link = user.HasPassword ? null : await accounts.CreateLinkAsync(emailAddress, AccountTokenPurpose.SetPassword, ct);
+            await email.SendAsync(EmailTemplates.BookingConfirmed(site.Value, booking, venue, link), ct);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            logger.LogError(ex, "Failed to send booking confirmation for {BookingId}", booking.Id);
+        }
+        return booking;
     }
 
     public async Task<CheckoutSession> StartMembershipAsync(MembershipRequest r, CancellationToken ct = default)

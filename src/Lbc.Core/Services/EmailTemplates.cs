@@ -26,6 +26,7 @@ public static class EmailTemplates
     public static EmailMessage BookingConfirmed(SiteOptions site, Booking booking, Venue? venue, string? setPasswordUrl)
     {
         var where = venue is null ? "" : $"{venue.Name}, {venue.Address}, {venue.Postcode}";
+        var payAtClass = booking.Status == BookingStatus.PayAtClass;
         var account = setPasswordUrl is null
             ? Button($"{site.BaseUrl}/account/", "View my bookings")
             : $"<p>Create your account to see your bookings any time:</p>{Button(setPasswordUrl, "Create my account")}<p style=\"font-size:13px;color:#454545\">This link expires in 7 days.</p>";
@@ -35,9 +36,11 @@ public static class EmailTemplates
             <tr><td><b>Class</b></td><td>{E(booking.ClassLabel)}</td></tr>
             <tr><td><b>Date</b></td><td>{booking.Date:dddd d MMMM yyyy}</td></tr>
             <tr><td><b>Where</b></td><td>{E(where)}</td></tr>
-            <tr><td><b>Paid</b></td><td>{Money.Format(booking.AmountPence)}</td></tr>
+            <tr><td><b>{(payAtClass ? "To pay" : "Paid")}</b></td><td>{Money.Format(booking.AmountPence)}{(payAtClass ? " at the class" : "")}</td></tr>
             </table>
-            <p>Just give your name to the teacher when you arrive. Wear comfy clothes and trainers and bring water.</p>
+            <p>{(payAtClass
+                ? $"Please pay {Money.Format(booking.AmountPence)} when you get to the class and give your name to the teacher."
+                : "Just give your name to the teacher when you arrive.")} Wear comfy clothes and trainers and bring water.</p>
             {account}
             """;
         return new(booking.Email, $"Booking confirmed: {booking.Date:ddd d MMM}", Layout(site.BusinessName, "Your class is booked", body));

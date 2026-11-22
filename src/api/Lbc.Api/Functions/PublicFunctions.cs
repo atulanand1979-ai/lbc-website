@@ -46,8 +46,8 @@ public sealed class PublicFunctions(
         {
             var b = await ApiHost.ReadJson<PayAsYouGoBody>(req);
             await RequireCaptcha(req, b.CaptchaToken);
-            var session = await checkout.StartPayAsYouGoAsync(new(b.VenueSlug, b.ClassId, b.Date, b.Name, b.Email, b.Phone), req.HttpContext.RequestAborted);
-            return new OkObjectResult(new { redirectUrl = session.RedirectUrl });
+            await checkout.BookPayAsYouGoAsync(new(b.VenueSlug, b.ClassId, b.Date, b.Name, b.Email, b.Phone), req.HttpContext.RequestAborted);
+            return new OkObjectResult(new { redirectUrl = "/book/success.html" });
         });
 
     [Function("CreateMembership")]

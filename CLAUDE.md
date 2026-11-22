@@ -20,10 +20,10 @@ Website for Leicester Bhangra Classes ("Britain's largest Bhangra school": weekl
 - Content document `wesbite content page.docx` (page copy, venues, prices, artists, "trusted by", charities, press links). Copy has been transcribed into the `.njk` pages.
 
 ## Agreed business rules (from the client via the developer)
-- **Pay As You Go £7.50:** customer chooses place → weekly class → date, pays online. Booking for a specific class; **no capacity limits, no cancellations/refunds**. Guest checkout (name, email, phone); confirmation email includes a "create your account" link.
+- **Pay As You Go £7.50:** customer chooses place → weekly class → date and is **booked straight away — no online payment; they pay at the class** (status `PayAtClass`; developer's change 2026-11-22, client to confirm and say how the teacher takes payment). Booking for a specific class; **no capacity limits**; one booking per email per class date. Guest booking (name, email, phone); confirmation email (sent immediately) says "pay at the class" and includes a "create your account" link. The old pay-online PAYG path (`Pending`→`Paid` via `OneOffPaid` webhook) is still in `PaymentEventProcessor` but nothing starts it.
 - **Memberships (monthly):** Bronze £25 = unlimited Beginners in **one chosen city** (home venue); Silver £35 = unlimited Beginners, all cities; Gold £45 = Beginners + advanced, all cities, plus perks.
 - **Members never book.** They turn up; the teacher checks names. The system does **not** enforce tier/city eligibility.
-- **Admin** manages places and weekly schedules ("every Monday 7pm"), skip dates (bank holidays), sees the class register (paid PAYG + eligible members), changes a Bronze member's home city, cancels memberships, reads enquiries. Admin does all member operations.
+- **Admin** manages places and weekly schedules ("every Monday 7pm"), skip dates (bank holidays), sees the class register (confirmed PAYG with "Collect £7.50" for pay-at-class + eligible members), changes a Bronze member's home city, cancels memberships, reads enquiries. Admin does all member operations.
 - Member account area: current membership + upcoming/past PAYG bookings. **No self-service cancel/upgrade** (maybe later; cancellation rules still undecided).
 - Not needed: SMS/reminders, under-18 handling, migrating existing members, teacher logins.
 - Shop: "coming soon" page only for now (phase 2).
@@ -31,7 +31,7 @@ Website for Leicester Bhangra Classes ("Britain's largest Bhangra school": weekl
 ## Technical decisions (and why)
 - **Hosting: Azure Static Web Apps Free + managed Functions API + Azure Table Storage** — cheapest option; developer previously used Fly.io for APIs but SWA managed functions cover it at £0.
 - **.NET 10 isolated** Functions (`apiRuntime: dotnet-isolated:10.0`) — .NET 8/9 support on SWA ended 10 Nov 2026.
-- **Payment gateway is provider-neutral** (`IPaymentGateway`, `src/Lbc.Core/Payments/Payments.cs`). The client may not want Stripe. Gateway only collects money via hosted checkout; **our tables are the source of truth**. Our reference (`BK|classId|yyyyMMdd|bookingId` or `MS|membershipId`) is passed to the gateway and must come back on every webhook. `FakePaymentGateway` + `/dev/fake-pay.html` simulate it locally. With no provider configured, `UnconfiguredPaymentGateway` refuses checkouts.
+- **Payment gateway is provider-neutral** (now only used for memberships) (`IPaymentGateway`, `src/Lbc.Core/Payments/Payments.cs`). The client may not want Stripe. Gateway only collects money via hosted checkout; **our tables are the source of truth**. Our reference (`BK|classId|yyyyMMdd|bookingId` or `MS|membershipId`) is passed to the gateway and must come back on every webhook. `FakePaymentGateway` + `/dev/fake-pay.html` simulate it locally. With no provider configured, `UnconfiguredPaymentGateway` refuses checkouts.
 - **Own auth**: HMAC JWT in an httpOnly/Secure/SameSite=Strict cookie (`lbc_session`), PBKDF2 passwords via ASP.NET Identity's `PasswordHasher`. **No Entra ID** (developer's explicit choice). State-changing endpoints require `application/json` (CSRF defence).
 - **Own email**: MailKit over the client's SMTP mailbox. **No Azure Communication Services** (developer's explicit choice).
 - **Frontend: plain HTML/CSS + vanilla JS modules, Eleventy only for the shared header/footer layout.** No SPA framework (SEO, simplicity). Developer chose this over Blazor/Astro.
@@ -49,7 +49,7 @@ Website for Leicester Bhangra Classes ("Britain's largest Bhangra school": weekl
 - Pinned versions: Microsoft.Extensions.* **10.0.x** (not 11 — must match the ASP.NET Core 10 shared framework in the Functions worker); MailKit 5 (`SendAsync(new SendRequest(msg))`); Eleventy 3.1.8.
 
 ## Infrastructure (as of 2026-11-22)
-- GitHub: private repo `https://github.com/atulanand1979-ai/lbc-website`, branch `main`. Workflow `.github/workflows/azure-static-web-apps.yml` tests, builds site + API itself (`skip_app_build`/`skip_api_build`) and deploys. **Manual only** (`workflow_dispatch`, developer's choice): pushes don't deploy and there are no PR preview environments — run it from Actions → "Build and deploy" → Run workflow.
+- GitHub: private repo `https://github.com/atulanand1979-ai/lbc-website`, branch `main`. Workflow `.github/workflows/azure-static-web-apps.yml` tests, builds site + API itself (`skip_app_build`/`skip_api_build`) and deploys. **Deploys on every push to `main`** (temporary, developer's choice while testing — switch back to manual-only `workflow_dispatch` later) and can also be run from Actions → "Build and deploy" → Run workflow. No PR preview environments.
 - Azure subscription "Azure subscription 1", resource group **`rg-lbc`**:
   - Static Web App **`swa-lbc`** (Free, West Europe) — `https://kind-mud-081113903.3.azurestaticapps.net`. Created via CLI with **no linked repo** (portal "GitHub" source caused a repositoryUrl template error).
   - Storage account **`stlbc2d8cxf9r`** (Standard LRS, UK South).
@@ -61,12 +61,12 @@ Website for Leicester Bhangra Classes ("Britain's largest Bhangra school": weekl
 
 ## Status / next steps
 1. ✅ Deployed (site + API + Table Storage working). Admin account created (developer's gmail) via bootstrap; `ADMIN_BOOTSTRAP_KEY` can now be deleted.
-2. ✅ Live places: **Leicester, Bedford, Kettering only** (developer's choice — the other 5 from `SeedService` are not loaded; add them via Admin → Places when wanted. The "Load the 8 places" button is a no-op once any place exists). Next: smoke-test PAYG + membership with the fake gateway.
+2. ✅ Live places: **Leicester, Bedford, Kettering only** (developer's choice — the other 5 from `SeedService` are not loaded; add them via Admin → Places when wanted. The "Load the 8 places" button is a no-op once any place exists). Next: smoke-test PAYG (pay at class) + membership with the fake gateway.
 3. Choose and implement the real payment provider (blocks go-live).
 4. Email: sending from a dedicated Gmail for testing, all redirected to the developer. Before go-live: decide the final mailbox (client's own or the Gmail), remove `Smtp__RedirectAllTo`, set `Site__AdminEmail` to the client's inbox. No way yet to add more admins (bootstrap only works once) — needs a script or an admin-area feature.
 5. Custom domain (client currently uses leicesterbhangraclasses.co.uk) → update `Site__BaseUrl`.
 6. Privacy policy, cookie notice, terms (UK GDPR); confirm VAT status.
-7. Optional: Cloudflare Turnstile keys for form anti-spam.
+7. Cloudflare Turnstile keys for form anti-spam — more important now PAYG bookings need no payment.
 
 ## Content the client must confirm
 - Hike amount for Khalsa Aid (doc says "AMAN ADD THE AMOUNT HERE") — placeholder on Charity page.
@@ -83,4 +83,5 @@ Website for Leicester Bhangra Classes ("Britain's largest Bhangra school": weekl
 
 ## Change log
 - 2026-11-22 — First deploy confirmed. Admin bootstrapped. Fake payments enabled on live. Loaded Leicester, Bedford, Kettering (with their weekly classes) into live tables. Added working rules + `lbc` agent (`.claude/agents/lbc.md`).
-- 2026-11-22 — Real email on: Gmail `classesleicesterbhangra@gmail.com` SMTP settings, new `Smtp__RedirectAllTo` option (all mail → developer while testing), `Site__AdminEmail` → developer's gmail.
+- 2026-11-22 — Real email on: Gmail `classesleicesterbhangra@gmail.com` SMTP settings, new `Smtp__RedirectAllTo` option (all mail → developer while testing), `Site__AdminEmail` → developer's gmail. Deployed, then `Smtp__Mode=Smtp`; test forgot-password email arrived (in spam at first — new sender).
+- 2026-11-22 — PAYG changed to "book now, pay at the class": no gateway page, confirmation email sent immediately, register shows who to collect from, duplicate bookings refused. Workflow now deploys on every push to `main` (temporary).

@@ -10,8 +10,8 @@ const STATUS = { Active: "Active", PastDue: "Payment overdue", Cancelled: "Cance
 
 function bookingRows(list) {
   if (!list.length) return `<p class="muted">None.</p>`;
-  return `<div class="table-wrap"><table class="data"><thead><tr><th>Date</th><th>Class</th><th>Paid</th></tr></thead><tbody>
-    ${list.map((b) => `<tr><td>${esc(fmtDate(b.date))}</td><td>${esc(b.classLabel)}</td><td>${money(b.amountPence)}</td></tr>`).join("")}
+  return `<div class="table-wrap"><table class="data"><thead><tr><th>Date</th><th>Class</th><th>Price</th></tr></thead><tbody>
+    ${list.map((b) => `<tr><td>${esc(fmtDate(b.date))}</td><td>${esc(b.classLabel)}</td><td>${money(b.amountPence)}${b.status === "PayAtClass" ? ` <span class="small muted">pay at class</span>` : ` <span class="small muted">paid</span>`}</td></tr>`).join("")}
   </tbody></table></div>`;
 }
 

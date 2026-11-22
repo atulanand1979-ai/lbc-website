@@ -43,7 +43,7 @@ public sealed class MemberAdminService(
             .FirstOrDefault();
 
         var today = UkTime.Today(clock);
-        var paid = (await bookings.GetByEmailAsync(user.Email, ct)).Where(b => b.Status == BookingStatus.Paid).ToList();
+        var paid = (await bookings.GetByEmailAsync(user.Email, ct)).Where(b => b.Status != BookingStatus.Pending).ToList();
         return new AccountDto(
             user.Name, user.Email, user.Phone, user.Role.ToString(),
             membership is null ? null : ToDto(membership, user, allVenues),
@@ -51,7 +51,7 @@ public sealed class MemberAdminService(
             paid.Where(b => b.Date < today).OrderByDescending(b => b.Date).Take(50).Select(ToDto).ToList());
     }
 
-    /// <summary>Class register for a place on a date: paid PAYG bookings per class, plus members allowed at this place.</summary>
+    /// <summary>Class register for a place on a date: confirmed PAYG bookings (paid online or paying at class) per class, plus members allowed at this place.</summary>
     public async Task<RegisterDto> GetRegisterAsync(string venueSlug, DateOnly date, CancellationToken ct = default)
     {
         var venue = await venues.GetAsync(venueSlug, ct) ?? throw new NotFoundException("Location not found.");
@@ -61,7 +61,7 @@ public sealed class MemberAdminService(
         foreach (var c in venueClasses)
         {
             var paid = (await bookings.GetForSessionAsync(c.Id, date, ct))
-                .Where(b => b.Status == BookingStatus.Paid).OrderBy(b => b.Name).Select(ToDto).ToList();
+                .Where(b => b.Status != BookingStatus.Pending).OrderBy(b => b.Name).Select(ToDto).ToList();
             registerClasses.Add(new RegisterClassDto(CatalogService.ToDto(c), paid));
         }
 

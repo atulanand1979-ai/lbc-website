@@ -1,4 +1,4 @@
-// Pay As You Go: choose place -> weekly class -> date -> details -> pay.
+// Pay As You Go: choose place -> weekly class -> date -> details -> booked (pay at the class).
 import { api, esc, getConfig, handleSubmit, money, mountCaptcha, showMessage } from "./api.js";
 
 const form = document.getElementById("book-form");
@@ -18,7 +18,6 @@ const time = (hhmm) => {
   return `${hour}${m ? `:${String(m).padStart(2, "0")}` : ""}${h < 12 ? "am" : "pm"}`;
 };
 const params = new URLSearchParams(location.search);
-if (params.get("cancelled")) showMessage(message, "info", "Payment was cancelled — your place hasn't been booked. You can try again below.");
 
 const option = (name, value, title, sub, checked = false) => `
   <label class="option"><input type="radio" name="${name}" value="${esc(value)}" ${checked ? "checked" : ""} required>
@@ -62,7 +61,7 @@ async function onDateChange() {
   const date = dateBox.querySelector("input:checked")?.closest("label").textContent.trim();
   const { prices } = await getConfig();
   summary.innerHTML = `<span>${esc(venue.city)} · ${esc(cls.label)}<br><span class="muted">${esc(date)}</span></span>
-    <span class="summary__price">${prices ? money(prices.payAsYouGoPence) : ""}</span>`;
+    <span class="summary__price">${prices ? `${money(prices.payAsYouGoPence)}<br><small class="muted">pay at class</small>` : ""}</span>`;
   show(detailsStep, true);
 }
 

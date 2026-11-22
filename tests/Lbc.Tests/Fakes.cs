@@ -134,7 +134,7 @@ public sealed class TestApp
     public TestApp()
     {
         Accounts = new AccountService(Users, Tokens, new PasswordService(), Email, Site, Clock);
-        Checkout = new CheckoutService(Venues, Classes, Bookings, Memberships, Accounts, Gateway, Pricing, Site, Clock);
+        Checkout = new CheckoutService(Venues, Classes, Bookings, Memberships, Accounts, Gateway, Email, Pricing, Site, Clock, NullLogger<CheckoutService>.Instance);
         Processor = new PaymentEventProcessor(EventLog, Bookings, Memberships, Users, Venues, Accounts, Email, Site, Clock, NullLogger<PaymentEventProcessor>.Instance);
         Admin = new MemberAdminService(Venues, Classes, Bookings, Memberships, Users, Enquiries, Gateway, Accounts, Email, Site, Clock);
         Schedule = new ScheduleAdminService(Venues, Classes);

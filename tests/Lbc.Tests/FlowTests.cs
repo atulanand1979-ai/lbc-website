@@ -14,25 +14,22 @@ public class FlowTests
     }
 
     [Fact]
-    public async Task Pay_as_you_go_booking_becomes_paid_and_sends_account_link()
+    public async Task Pay_as_you_go_booking_is_confirmed_straight_away_with_pay_at_class_email()
     {
         var app = new TestApp();
         var (_, cls) = await app.AddLeicesterTuesdayAsync();
 
-        var session = await app.Checkout.StartPayAsYouGoAsync(new("leicester", cls.Id, "2026-12-08", "Priya Kaur", "Priya@Example.com", "07700 900123"));
-        Assert.Equal("https://pay.example/one-off", session.RedirectUrl);
+        var booking = await app.Checkout.BookPayAsYouGoAsync(new("leicester", cls.Id, "2026-12-08", "Priya Kaur", "Priya@Example.com", "07700 900123"));
 
-        var request = Assert.IsType<OneOffPaymentRequest>(app.Gateway.Requests.Single());
-        Assert.Equal(750, request.AmountPence);
-        var booking = app.Bookings.Items.Values.Single();
-        Assert.Equal(BookingStatus.Pending, booking.Status);
+        Assert.Empty(app.Gateway.Requests); // no online payment
+        Assert.Equal(BookingStatus.PayAtClass, booking.Status);
+        Assert.Equal(750, booking.AmountPence);
         Assert.Equal("priya@example.com", booking.Email);
 
-        await app.Processor.HandleAsync(new PaymentEvent("evt_1", PaymentEventType.OneOffPaid, request.Reference, "pay_1", 750));
-
-        Assert.Equal(BookingStatus.Paid, booking.Status);
         var mail = app.Email.Sent.Single();
         Assert.Equal("priya@example.com", mail.To);
+        Assert.Contains("pay", mail.HtmlBody);
+        Assert.Contains("at the class", mail.HtmlBody);
         Assert.Contains("Create my account", mail.HtmlBody);
 
         // Following the link sets the password and the booking shows on the account page.
@@ -40,18 +37,33 @@ public class FlowTests
         Assert.True(user.HasPassword);
         Assert.NotNull(await app.Accounts.LoginAsync("priya@example.com", "a-long-password"));
         var account = await app.Admin.GetAccountAsync("priya@example.com");
-        Assert.Single(account.Upcoming);
+        Assert.Equal("PayAtClass", account.Upcoming.Single().Status);
+
+        // A second booking: no account link once a password exists.
+        await app.Checkout.BookPayAsYouGoAsync(new("leicester", cls.Id, "2026-12-15", "Priya Kaur", "priya@example.com", "07700 900123"));
+        Assert.DoesNotContain("Create my account", app.Email.Sent[^1].HtmlBody);
+    }
+
+    [Fact]
+    public async Task Same_person_cannot_book_the_same_class_twice()
+    {
+        var app = new TestApp();
+        var (_, cls) = await app.AddLeicesterTuesdayAsync();
+        await app.Checkout.BookPayAsYouGoAsync(new("leicester", cls.Id, "2026-12-08", "A", "a@example.com", "07700900123"));
+        await Assert.ThrowsAsync<ValidationException>(() =>
+            app.Checkout.BookPayAsYouGoAsync(new("leicester", cls.Id, "2026-12-08", "A", "A@example.com", "07700900123")));
+        Assert.Single(app.Bookings.Items);
     }
 
     [Fact]
     public async Task Duplicate_webhook_is_ignored()
     {
         var app = new TestApp();
-        var (_, cls) = await app.AddLeicesterTuesdayAsync();
-        await app.Checkout.StartPayAsYouGoAsync(new("leicester", cls.Id, "2026-12-08", "A", "a@example.com", "07700900123"));
-        var reference = ((OneOffPaymentRequest)app.Gateway.Requests[0]).Reference;
+        await app.AddLeicesterTuesdayAsync();
+        await app.Checkout.StartMembershipAsync(new("silver", null, "A", "a@example.com", "07700900123"));
+        var reference = ((RecurringPaymentRequest)app.Gateway.Requests[0]).Reference;
 
-        var e = new PaymentEvent("evt_dup", PaymentEventType.OneOffPaid, reference, "pay_1", 750);
+        var e = new PaymentEvent("evt_dup", PaymentEventType.RecurringStarted, reference, "sub_1");
         await app.Processor.HandleAsync(e);
         await app.Processor.HandleAsync(e);
         Assert.Single(app.Email.Sent);
@@ -63,10 +75,10 @@ public class FlowTests
         var app = new TestApp();
         var (_, cls) = await app.AddLeicesterTuesdayAsync();
         await Assert.ThrowsAsync<ValidationException>(() =>
-            app.Checkout.StartPayAsYouGoAsync(new("leicester", cls.Id, "2026-12-09", "A", "a@example.com", "07700900123"))); // a Wednesday
+            app.Checkout.BookPayAsYouGoAsync(new("leicester", cls.Id, "2026-12-09", "A", "a@example.com", "07700900123"))); // a Wednesday
         await app.Schedule.UpdateClassAsync("leicester", cls.Id, new ClassInput("Tuesday", "19:00", "20:00", "Beginners", true, ["2026-12-08"]));
         await Assert.ThrowsAsync<ValidationException>(() =>
-            app.Checkout.StartPayAsYouGoAsync(new("leicester", cls.Id, "2026-12-08", "A", "a@example.com", "07700900123"))); // skipped
+            app.Checkout.BookPayAsYouGoAsync(new("leicester", cls.Id, "2026-12-08", "A", "a@example.com", "07700900123"))); // skipped
     }
 
     [Fact]
@@ -101,15 +113,19 @@ public class FlowTests
     }
 
     [Fact]
-    public async Task Register_lists_paid_bookings_and_eligible_members()
+    public async Task Register_lists_confirmed_bookings_and_eligible_members()
     {
         var app = new TestApp();
         var (_, cls) = await app.AddLeicesterTuesdayAsync();
         await app.Schedule.CreateVenueAsync(new VenueInput("coventry", "Coventry", "Meadow Park School", "", "CV3 4BD", null, true, null, 2));
 
-        await app.Checkout.StartPayAsYouGoAsync(new("leicester", cls.Id, "2026-12-08", "Paid Person", "paid@example.com", "07700900123"));
-        await app.Processor.HandleAsync(new PaymentEvent("e1", PaymentEventType.OneOffPaid, ((OneOffPaymentRequest)app.Gateway.Requests[0]).Reference, "p"));
-        await app.Checkout.StartPayAsYouGoAsync(new("leicester", cls.Id, "2026-12-08", "Unpaid Person", "unpaid@example.com", "07700900123"));
+        await app.Checkout.BookPayAsYouGoAsync(new("leicester", cls.Id, "2026-12-08", "Booked Person", "booked@example.com", "07700900123"));
+        // A left-over booking from the old pay-online flow that was never paid is not on the register.
+        await app.Bookings.UpsertAsync(new Booking
+        {
+            Id = "old", VenueSlug = "leicester", ClassId = cls.Id, Date = new DateOnly(2026, 12, 8),
+            Email = "unpaid@example.com", Name = "Unpaid Person", Status = BookingStatus.Pending,
+        });
 
         async Task Member(string tier, string? venue, string email)
         {
@@ -122,7 +138,7 @@ public class FlowTests
         await Member("silver", null, "silver@example.com");
 
         var register = await app.Admin.GetRegisterAsync("leicester", new DateOnly(2026, 12, 8));
-        Assert.Equal("Paid Person", register.Classes.Single().PayAsYouGo.Single().Name);
+        Assert.Equal("Booked Person", register.Classes.Single().PayAsYouGo.Single().Name);
         Assert.Equal(["bronze-lei@example.com", "silver@example.com"], register.Members.Select(m => m.Email).Order().ToArray());
     }
 

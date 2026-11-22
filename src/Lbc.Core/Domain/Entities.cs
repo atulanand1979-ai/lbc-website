@@ -70,7 +70,11 @@ public sealed class Membership
     public bool IsLive => Status is MembershipStatus.Active or MembershipStatus.PastDue;
 }
 
-public enum BookingStatus { Pending, Paid }
+/// <summary>
+/// Pending = waiting for an online payment (legacy flow). Paid = paid online.
+/// PayAtClass = confirmed straight away; the customer pays the teacher on the day.
+/// </summary>
+public enum BookingStatus { Pending, Paid, PayAtClass }
 
 /// <summary>A Pay As You Go booking for one class on one date.</summary>
 public sealed class Booking
