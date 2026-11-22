@@ -44,6 +44,9 @@ function render(a) {
     <h3>Past classes</h3>${bookingRows(a.past)}`;
   document.getElementById("logout").addEventListener("click", async () => {
     await api("auth/logout", { method: "POST", body: {} });
+    // Make sure the session really ended rather than silently reloading as the same user.
+    const stillSignedIn = await api("me").then(() => true, () => false);
+    if (stillSignedIn) { alert("Sorry, we couldn't sign you out. Please close your browser to end the session."); return; }
     location.reload();
   });
 }

@@ -70,8 +70,20 @@ public sealed class ApiHost(ITokenService tokens, ILogger<ApiHost> logger)
             MaxAge = tokens.Lifetime,
         });
 
+    /// <summary>
+    /// Overwrites the session cookie with a dummy value that expires immediately.
+    /// Not Cookies.Delete: its empty-valued Set-Cookie never reached the browser behind Static Web Apps.
+    /// </summary>
     public static void SignOut(HttpResponse res) =>
-        res.Cookies.Delete(AuthCookie, new CookieOptions { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Strict, Path = "/" });
+        res.Cookies.Append(AuthCookie, "signed-out", new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Path = "/",
+            MaxAge = TimeSpan.Zero,
+            Expires = DateTimeOffset.UnixEpoch,
+        });
 
     public static string? ClientIp(HttpRequest req) =>
         req.Headers["X-Forwarded-For"].FirstOrDefault()?.Split(',')[0].Trim() ?? req.HttpContext.Connection.RemoteIpAddress?.ToString();
