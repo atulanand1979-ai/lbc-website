@@ -10,10 +10,24 @@ namespace Lbc.Infrastructure.Payments;
 public sealed class PaymentOptions
 {
     public const string Section = "Payments";
-    /// <summary>"Fake" for local development. A real provider adapter will be added once the client chooses one.</summary>
+    /// <summary>"GoCardless", or "Fake" for development/demos. Anything else refuses payments.</summary>
     public string Provider { get; set; } = "None";
     /// <summary>Shared secret the fake checkout page uses to sign its simulated webhooks.</summary>
     public string FakeWebhookSecret { get; set; } = "";
+    public GoCardlessOptions GoCardless { get; set; } = new();
+}
+
+public sealed class GoCardlessOptions
+{
+    /// <summary>"sandbox" (default) or "live".</summary>
+    public string Environment { get; set; } = "sandbox";
+    /// <summary>API access token (Developers → Create → Access token, read-write). Secret.</summary>
+    public string AccessToken { get; set; } = "";
+    /// <summary>Webhook endpoint secret (Developers → Create → Webhook endpoint). Secret.</summary>
+    public string WebhookSecret { get; set; } = "";
+
+    public bool IsLive => Environment.Equals("live", StringComparison.OrdinalIgnoreCase);
+    public Uri BaseAddress => new(IsLive ? "https://api.gocardless.com/" : "https://api-sandbox.gocardless.com/");
 }
 
 /// <summary>
@@ -27,12 +41,14 @@ public sealed class FakePaymentGateway(IOptions<PaymentOptions> options, IOption
     public Task<CheckoutSession> CreateOneOffCheckoutAsync(OneOffPaymentRequest r, CancellationToken ct = default) =>
         Task.FromResult(Checkout("one-off", r.Reference, r.AmountPence, r.Description, r.SuccessUrl, r.CancelUrl));
 
+    /// <summary>Memberships go to a demo of the Direct Debit set-up step (/dev/fake-direct-debit.html).</summary>
     public Task<CheckoutSession> CreateRecurringCheckoutAsync(RecurringPaymentRequest r, CancellationToken ct = default) =>
-        Task.FromResult(Checkout("recurring", r.Reference, r.MonthlyAmountPence, r.Description, r.SuccessUrl, r.CancelUrl));
+        Task.FromResult(Checkout("recurring", r.Reference, r.MonthlyAmountPence, r.Description, r.SuccessUrl, r.CancelUrl,
+            page: "fake-direct-debit.html", extra: new() { ["name"] = r.CustomerName, ["email"] = r.CustomerEmail }));
 
     public Task CancelRecurringAsync(string gatewayRecurringRef, CancellationToken ct = default) => Task.CompletedTask;
 
-    public Task<PaymentEvent?> ParseWebhookAsync(WebhookRequest request, CancellationToken ct = default)
+    public Task<IReadOnlyList<PaymentEvent>> ParseWebhookAsync(WebhookRequest request, CancellationToken ct = default)
     {
         var secret = options.Value.FakeWebhookSecret;
         if (string.IsNullOrEmpty(secret)) throw new InvalidWebhookException("Fake gateway secret not configured.");
@@ -41,12 +57,12 @@ public sealed class FakePaymentGateway(IOptions<PaymentOptions> options, IOption
 
         var p = JsonSerializer.Deserialize<FakeWebhook>(request.Body, JsonSerializerOptions.Web)
                 ?? throw new InvalidWebhookException("Empty body.");
-        if (!Enum.TryParse<PaymentEventType>(p.Type, out var type)) return Task.FromResult<PaymentEvent?>(null);
+        if (!Enum.TryParse<PaymentEventType>(p.Type, out var type)) return Task.FromResult<IReadOnlyList<PaymentEvent>>([]);
 
         DateTimeOffset? periodEnd = type is PaymentEventType.RecurringStarted or PaymentEventType.RecurringRenewed
             ? DateTimeOffset.UtcNow.AddMonths(1) : null;
         var gatewayRef = type == PaymentEventType.OneOffPaid ? $"fake_pay_{p.EventId}" : $"fake_sub_{Lbc.Core.Services.Ids.Sha256(p.Reference)[..16]}";
-        return Task.FromResult<PaymentEvent?>(new PaymentEvent(p.EventId, type, p.Reference, gatewayRef, p.AmountPence, periodEnd));
+        return Task.FromResult<IReadOnlyList<PaymentEvent>>([new PaymentEvent(p.EventId, type, p.Reference, gatewayRef, p.AmountPence, periodEnd)]);
     }
 
     public static string Sign(string secret, string body) =>
@@ -55,14 +71,17 @@ public sealed class FakePaymentGateway(IOptions<PaymentOptions> options, IOption
     private static bool SignatureMatches(string secret, string body, string signature) =>
         CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(Sign(secret, body)), Encoding.UTF8.GetBytes(signature.Trim().ToLowerInvariant()));
 
-    private CheckoutSession Checkout(string kind, string reference, int amountPence, string description, string successUrl, string cancelUrl)
+    private CheckoutSession Checkout(string kind, string reference, int amountPence, string description, string successUrl, string cancelUrl,
+        string page = "fake-pay.html", Dictionary<string, string>? extra = null)
     {
-        var q = string.Join("&", new Dictionary<string, string>
+        var values = new Dictionary<string, string>
         {
             ["kind"] = kind, ["ref"] = reference, ["amount"] = amountPence.ToString(), ["desc"] = description,
             ["success"] = successUrl, ["cancel"] = cancelUrl,
-        }.Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value)}"));
-        return new CheckoutSession($"{site.Value.BaseUrl.TrimEnd('/')}/dev/fake-pay.html?{q}", null);
+        };
+        foreach (var (k, v) in extra ?? []) values[k] = v;
+        var q = string.Join("&", values.Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value)}"));
+        return new CheckoutSession($"{site.Value.BaseUrl.TrimEnd('/')}/dev/{page}?{q}", null);
     }
 
     private sealed record FakeWebhook(string EventId, string Type, string Reference, int? AmountPence);
@@ -75,5 +94,5 @@ public sealed class UnconfiguredPaymentGateway : IPaymentGateway
     public Task<CheckoutSession> CreateOneOffCheckoutAsync(OneOffPaymentRequest r, CancellationToken ct = default) => throw NotConfigured();
     public Task<CheckoutSession> CreateRecurringCheckoutAsync(RecurringPaymentRequest r, CancellationToken ct = default) => throw NotConfigured();
     public Task CancelRecurringAsync(string gatewayRecurringRef, CancellationToken ct = default) => throw NotConfigured();
-    public Task<PaymentEvent?> ParseWebhookAsync(WebhookRequest request, CancellationToken ct = default) => throw new InvalidWebhookException("No payment provider configured.");
+    public Task<IReadOnlyList<PaymentEvent>> ParseWebhookAsync(WebhookRequest request, CancellationToken ct = default) => throw new InvalidWebhookException("No payment provider configured.");
 }

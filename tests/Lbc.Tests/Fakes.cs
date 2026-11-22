@@ -103,7 +103,7 @@ public sealed class RecordingGateway : IPaymentGateway
     public Task<CheckoutSession> CreateOneOffCheckoutAsync(OneOffPaymentRequest r, CancellationToken ct = default) { Requests.Add(r); return Task.FromResult(new CheckoutSession("https://pay.example/one-off", null)); }
     public Task<CheckoutSession> CreateRecurringCheckoutAsync(RecurringPaymentRequest r, CancellationToken ct = default) { Requests.Add(r); return Task.FromResult(new CheckoutSession("https://pay.example/recurring", null)); }
     public Task CancelRecurringAsync(string gatewayRecurringRef, CancellationToken ct = default) { Cancelled.Add(gatewayRecurringRef); return Task.CompletedTask; }
-    public Task<PaymentEvent?> ParseWebhookAsync(WebhookRequest request, CancellationToken ct = default) => Task.FromResult<PaymentEvent?>(null);
+    public Task<IReadOnlyList<PaymentEvent>> ParseWebhookAsync(WebhookRequest request, CancellationToken ct = default) => Task.FromResult<IReadOnlyList<PaymentEvent>>([]);
 }
 
 /// <summary>Wires the real services over in-memory stores.</summary>
@@ -135,7 +135,7 @@ public sealed class TestApp
     {
         Accounts = new AccountService(Users, Tokens, new PasswordService(), Email, Site, Clock);
         Checkout = new CheckoutService(Venues, Classes, Bookings, Memberships, Accounts, Gateway, Email, Pricing, Site, Clock, NullLogger<CheckoutService>.Instance);
-        Processor = new PaymentEventProcessor(EventLog, Bookings, Memberships, Users, Venues, Accounts, Email, Site, Clock, NullLogger<PaymentEventProcessor>.Instance);
+        Processor = new PaymentEventProcessor(EventLog, Bookings, Memberships, Gateway, Users, Venues, Accounts, Email, Site, Clock, NullLogger<PaymentEventProcessor>.Instance);
         Admin = new MemberAdminService(Venues, Classes, Bookings, Memberships, Users, Enquiries, Gateway, Accounts, Email, Site, Clock);
         Schedule = new ScheduleAdminService(Venues, Classes);
         Catalog = new CatalogService(Venues, Classes, Pricing, Site, Clock);

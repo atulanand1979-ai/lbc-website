@@ -28,25 +28,30 @@ public sealed class PaymentFunctions(
         var body = await reader.ReadToEndAsync(req.HttpContext.RequestAborted);
         var headers = req.Headers.ToDictionary(h => h.Key.ToLowerInvariant(), h => h.Value.ToString());
 
-        PaymentEvent? evt;
-        try { evt = await gateway.ParseWebhookAsync(new WebhookRequest(body, headers), req.HttpContext.RequestAborted); }
+        IReadOnlyList<PaymentEvent> events;
+        try { events = await gateway.ParseWebhookAsync(new WebhookRequest(body, headers), req.HttpContext.RequestAborted); }
         catch (InvalidWebhookException ex)
         {
             logger.LogWarning("Rejected payment webhook: {Reason}", ex.Message);
             return new BadRequestResult();
         }
-
-        if (evt is null) return new OkResult(); // an event type we don't use
-        try
-        {
-            await processor.HandleAsync(evt, req.HttpContext.RequestAborted);
-            return new OkResult();
-        }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed processing payment event {EventId}", evt.EventId);
-            return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            logger.LogError(ex, "Failed reading payment webhook");
+            return new StatusCodeResult(StatusCodes.Status500InternalServerError); // the gateway retries
         }
+
+        // Events already handled are skipped by the processor, so a retried batch is safe.
+        foreach (var evt in events)
+        {
+            try { await processor.HandleAsync(evt, req.HttpContext.RequestAborted); }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed processing payment event {EventId}", evt.EventId);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+        return new OkResult();
     }
 
     /// <summary>
@@ -76,8 +81,8 @@ public sealed class PaymentFunctions(
             {
                 [FakePaymentGateway.SignatureHeader] = FakePaymentGateway.Sign(paymentOptions.Value.FakeWebhookSecret, payload),
             };
-            var evt = await gateway.ParseWebhookAsync(new WebhookRequest(payload, headers));
-            if (evt is not null) await processor.HandleAsync(evt, req.HttpContext.RequestAborted);
+            foreach (var evt in await gateway.ParseWebhookAsync(new WebhookRequest(payload, headers)))
+                await processor.HandleAsync(evt, req.HttpContext.RequestAborted);
             return new OkObjectResult(new { ok = true, type = type.ToString() });
         });
 }

@@ -23,7 +23,7 @@ swa start src/web/_site --api-devserver-url http://localhost:7071   # terminal 4
 
 If Windows Smart App Control blocks the locally built DLLs, use `docker compose up --build` for Azurite + API instead of terminals 1–2.
 
-`local.settings.json` is git-ignored; it holds dev-only secrets. Locally, emails are written to the Functions log (`Smtp__Mode=Log`) and payments use the fake gateway (`Payments__Provider=Fake`), which opens `/dev/fake-pay.html` instead of a real checkout.
+`local.settings.json` is git-ignored; it holds dev-only secrets. Locally, emails are written to the Functions log (`Smtp__Mode=Log`) and payments use the fake gateway (`Payments__Provider=Fake`), which opens `/dev/fake-direct-debit.html` (a demo of the GoCardless Direct Debit page) instead of a real one.
 
 ### First admin
 ```powershell
@@ -46,7 +46,8 @@ dotnet test
 | `Site__AdminEmail` | Inbox for enquiries |
 | `Smtp__Mode` = `Smtp`, `Smtp__Host`, `Smtp__Port`, `Smtp__Security` (`StartTls`/`SslOnConnect`), `Smtp__Username`, `Smtp__Password`, `Smtp__FromAddress`, `Smtp__FromName` | Sending mailbox (Gmail: `smtp.gmail.com`, 587, `StartTls`, app password; From must be the Gmail address) |
 | `Smtp__RedirectAllTo` | Testing only: every email goes to this address, subject prefixed with the real recipient. Remove before go-live |
-| `Payments__Provider` | `Fake` locally. **No real provider yet** – checkouts are refused until one is added |
+| `Payments__Provider` | `GoCardless` (memberships by Bacs Direct Debit) or `Fake` (local/demo: memberships open `/dev/fake-direct-debit.html`). Anything else refuses checkouts |
+| `Payments__GoCardless__Environment`, `Payments__GoCardless__AccessToken`, `Payments__GoCardless__WebhookSecret` | `sandbox` (default) or `live`; read-write access token; webhook endpoint secret. Webhook URL to register in GoCardless: `<Site__BaseUrl>/api/payments/webhook` |
 | `Turnstile__SiteKey`, `Turnstile__SecretKey` | Optional Cloudflare Turnstile anti-spam on public forms |
 | `ADMIN_BOOTSTRAP_KEY` | One-off first-admin creation (remove after use) |
 | `Pricing__PayAsYouGoPence` / `BronzePence` / `SilverPence` / `GoldPence` | Defaults 750 / 2500 / 3500 / 4500. The prices shown in the page copy (`signup.njk`, `join/index.njk`) are text – keep them in step |

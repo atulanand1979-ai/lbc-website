@@ -17,10 +17,12 @@ public interface IPaymentGateway
     Task CancelRecurringAsync(string gatewayRecurringRef, CancellationToken ct = default);
 
     /// <summary>
-    /// Verifies the webhook's signature and maps it to a normalised event.
-    /// Returns null for event types we don't care about. Throws <see cref="InvalidWebhookException"/> if the signature is invalid.
+    /// Verifies the webhook's signature and maps it to normalised events (a provider may batch several
+    /// events in one webhook). Event types we don't use are left out. Throws <see cref="InvalidWebhookException"/>
+    /// if the signature is invalid. May call the provider (e.g. to look up our reference, or to start the
+    /// monthly collection once a Direct Debit mandate exists); such calls must be idempotent because webhooks are retried.
     /// </summary>
-    Task<PaymentEvent?> ParseWebhookAsync(WebhookRequest request, CancellationToken ct = default);
+    Task<IReadOnlyList<PaymentEvent>> ParseWebhookAsync(WebhookRequest request, CancellationToken ct = default);
 }
 
 /// <param name="Reference">Our reference (see <see cref="PaymentReference"/>). Gateways must echo it back on every event.</param>

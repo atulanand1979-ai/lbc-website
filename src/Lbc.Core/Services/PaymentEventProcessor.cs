@@ -11,6 +11,7 @@ public sealed class PaymentEventProcessor(
     IPaymentEventLog eventLog,
     IBookingRepository bookings,
     IMembershipRepository memberships,
+    IPaymentGateway gateway,
     IUserRepository users,
     IVenueRepository venues,
     AccountService accounts,
@@ -95,7 +96,13 @@ public sealed class PaymentEventProcessor(
         {
             case PaymentEventType.RecurringStarted:
             case PaymentEventType.RecurringRenewed:
-                if (m.Status == MembershipStatus.Cancelled) break; // late event after admin cancelled
+                if (m.Status == MembershipStatus.Cancelled)
+                {
+                    // Set up at the gateway after admin cancelled: stop it collecting.
+                    if (e.Type == PaymentEventType.RecurringStarted && e.GatewayRef is not null)
+                        await gateway.CancelRecurringAsync(e.GatewayRef, ct);
+                    break;
+                }
                 m.Status = MembershipStatus.Active;
                 break;
             case PaymentEventType.RecurringFailed:

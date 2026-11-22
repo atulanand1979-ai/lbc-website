@@ -1,0 +1,102 @@
+---
+permalink: /dev/fake-direct-debit.html
+eleventyExcludeFromCollections: true
+---
+{# Demo only (Payments:Provider = Fake): shows roughly what the GoCardless hosted Direct Debit page
+   looks like, so the membership journey can be shown before the GoCardless account is ready.
+   Bank details typed here are only checked for format in the browser; they are never sent anywhere.
+   The API endpoint it calls returns 404 for any other provider, so the page is inert in production. #}
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Set up a Direct Debit · {{ site.name }} (demo)</title>
+<link rel="stylesheet" href="/css/fake-direct-debit.css">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<div class="demo-banner">
+  <strong>Demo</strong> — this is a preview of the secure Direct Debit page that GoCardless will host.
+  Please don't enter real bank details: nothing typed here is sent or stored.
+</div>
+
+<main class="dd">
+  <header class="dd__merchant">
+    <div class="dd__logo" aria-hidden="true">LBC</div>
+    <div>
+      <div class="dd__merchant-name">{{ site.name }}</div>
+      <div class="dd__muted">Payments by Direct Debit</div>
+    </div>
+  </header>
+
+  <section class="dd__card dd__plan" aria-label="What you're setting up">
+    <div>
+      <div class="dd__plan-name" id="dd-desc"></div>
+      <div class="dd__muted">Collected monthly by Direct Debit</div>
+    </div>
+    <div class="dd__plan-price"><span id="dd-amount"></span><span class="dd__muted"> /month</span></div>
+  </section>
+
+  <!-- Step 1: details -->
+  <form class="dd__card" id="dd-details" novalidate>
+    <h1>Set up a Direct Debit</h1>
+    <p class="dd__alert" id="dd-error" role="alert" hidden></p>
+
+    <h2>Your details</h2>
+    <div class="dd__row">
+      <label>First name<input name="given" autocomplete="off" required></label>
+      <label>Last name<input name="family" autocomplete="off" required></label>
+    </div>
+    <label>Email<input name="email" type="email" autocomplete="off" required></label>
+    <label>Postcode<input name="postcode" autocomplete="off" placeholder="LE1 1AA" required></label>
+
+    <h2>Bank details</h2>
+    <label>Account holder name<input name="holder" autocomplete="off" required></label>
+    <div class="dd__row">
+      <label>Sort code<input name="sort" inputmode="numeric" autocomplete="off" placeholder="00-00-00" required></label>
+      <label>Account number<input name="account" inputmode="numeric" autocomplete="off" placeholder="12345678" required></label>
+    </div>
+    <label class="dd__check"><input type="checkbox" name="sole" required> I am the account holder and the only person required to authorise Direct Debits from this account</label>
+
+    <button class="dd__btn" type="submit">Continue</button>
+    <a class="dd__link" id="dd-cancel" href="/">Cancel and go back</a>
+  </form>
+
+  <!-- Step 2: confirm -->
+  <section class="dd__card" id="dd-confirm" hidden>
+    <h1>Confirm your Direct Debit</h1>
+    <dl class="dd__summary" id="dd-summary"></dl>
+    <p class="dd__muted">The first payment will be taken a few working days from today, then monthly on about the same date.
+      You'll get an email confirming the Direct Debit and the date of each payment in advance.</p>
+    <button class="dd__btn" id="dd-submit" type="button">Set up Direct Debit</button>
+    <button class="dd__link" id="dd-back" type="button">Change details</button>
+  </section>
+
+  <section class="dd__card dd__guarantee">
+    <h2>The Direct Debit Guarantee</h2>
+    <ul>
+      <li>The Guarantee is offered by all banks and building societies that accept instructions to pay Direct Debits.</li>
+      <li>If there are any changes to the amount, date or frequency of your Direct Debit, you will be notified in advance.</li>
+      <li>If an error is made in the payment of your Direct Debit, you are entitled to a full and immediate refund of the amount paid from your bank or building society.</li>
+      <li>You can cancel a Direct Debit at any time by simply contacting your bank or building society.</li>
+    </ul>
+  </section>
+
+  <p class="dd__footer dd__muted">Secured by GoCardless · Payments are collected under {{ site.name }}'s Direct Debit agreement</p>
+
+  <details class="dd__tools">
+    <summary>Developer test tools</summary>
+    <p class="dd__muted">For testing after sign-up: simulate what GoCardless would tell the website later.</p>
+    <div class="dd__tools-row">
+      <button type="button" data-o="renew">Monthly payment collected</button>
+      <button type="button" data-o="fail">Payment failed</button>
+      <button type="button" data-o="cancel">Direct Debit cancelled at bank</button>
+    </div>
+    <p id="dd-tool-msg" class="dd__muted" hidden></p>
+  </details>
+</main>
+<script type="module" src="/js/fake-direct-debit.js"></script>
+</body>
+</html>

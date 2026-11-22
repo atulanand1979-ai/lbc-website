@@ -43,9 +43,10 @@ public static class DependencyInjection
         var provider = config[$"{PaymentOptions.Section}:Provider"] ?? "None";
         if (provider.Equals("Fake", StringComparison.OrdinalIgnoreCase))
             services.AddSingleton<IPaymentGateway, FakePaymentGateway>();
+        else if (provider.Equals("GoCardless", StringComparison.OrdinalIgnoreCase))
+            services.AddHttpClient<IPaymentGateway, GoCardlessPaymentGateway>();
         else
             services.AddSingleton<IPaymentGateway, UnconfiguredPaymentGateway>();
-        // Real providers register here, e.g. else if (provider == "Stripe") services.AddSingleton<IPaymentGateway, StripePaymentGateway>();
 
         services.AddScoped<AccountService>();
         services.AddScoped<CheckoutService>();

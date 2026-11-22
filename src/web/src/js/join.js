@@ -31,7 +31,7 @@ form.addEventListener("change", (e) => { if (e.target.name === "tier") update();
 
 const wanted = params.get("tier");
 if (wanted && TIERS[wanted]) form.querySelector(`input[name=tier][value=${wanted}]`).checked = true;
-if (params.get("cancelled")) showMessage(message, "info", "Payment was cancelled — no membership has been set up.");
+if (params.get("cancelled")) showMessage(message, "info", "Direct Debit set-up was cancelled — no membership has been set up.");
 
 (async () => {
   try {
