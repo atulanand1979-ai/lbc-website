@@ -118,9 +118,9 @@ public sealed class MemberAdminService(
 
     /// <summary>
     /// One-off setup: creates the first admin (or promotes an existing user) and emails a set-password link.
-    /// Refuses once any admin exists.
+    /// Refuses once any admin exists. Returns the set-password link so setup works before email is configured.
     /// </summary>
-    public async Task BootstrapAdminAsync(string? rawEmail, string? name, CancellationToken ct = default)
+    public async Task<string> BootstrapAdminAsync(string? rawEmail, string? name, CancellationToken ct = default)
     {
         if ((await users.GetAllAsync(ct)).Any(u => u.Role == UserRole.Admin))
             throw new ValidationException("An admin already exists.");
@@ -129,7 +129,11 @@ public sealed class MemberAdminService(
         user.Role = UserRole.Admin;
         await users.UpdateAsync(user, ct);
         var url = await accounts.CreateLinkAsync(user.Email, AccountTokenPurpose.SetPassword, ct);
-        await email.SendAsync(EmailTemplates.SetPassword(site.Value, user.Email, url, isReset: false), ct);
+        // Best effort: the link is returned to the caller, and a mail failure here would otherwise
+        // leave an admin created but unreachable (bootstrap refuses once an admin exists).
+        try { await email.SendAsync(EmailTemplates.SetPassword(site.Value, user.Email, url, isReset: false), ct); }
+        catch (Exception) { /* caller still has the link */ }
+        return url;
     }
 
     private static BookingDto ToDto(Booking b) => new(

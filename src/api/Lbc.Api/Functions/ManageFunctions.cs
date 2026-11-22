@@ -159,7 +159,8 @@ public sealed class ManageFunctions(
                 !CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(expected), Encoding.UTF8.GetBytes(provided)))
                 return new NotFoundResult();
             var b = await ApiHost.ReadJson<BootstrapBody>(req);
-            await members.BootstrapAdminAsync(b.Email, b.Name, req.HttpContext.RequestAborted);
-            return new OkObjectResult(new { ok = true, message = "Admin created. Check the email for the set-password link." });
+            // The caller already holds the bootstrap secret, so returning the link grants nothing extra.
+            var url = await members.BootstrapAdminAsync(b.Email, b.Name, req.HttpContext.RequestAborted);
+            return new OkObjectResult(new { ok = true, setPasswordUrl = url, message = "Admin created. Open setPasswordUrl to choose a password." });
         });
 }
