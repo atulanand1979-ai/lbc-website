@@ -71,8 +71,9 @@ public sealed class ApiHost(ITokenService tokens, ILogger<ApiHost> logger)
         });
 
     /// <summary>
-    /// Overwrites the session cookie with a dummy value that expires immediately.
-    /// Not Cookies.Delete: its empty-valued Set-Cookie never reached the browser behind Static Web Apps.
+    /// Overwrites the session cookie with a value that isn't a valid token (so the visitor is signed out)
+    /// and no expiry. Deliberately NOT an expired cookie: on the live Functions host, Set-Cookie headers
+    /// for already-expired cookies (Cookies.Delete, or Max-Age=0) never reach the browser.
     /// </summary>
     public static void SignOut(HttpResponse res) =>
         res.Cookies.Append(AuthCookie, "signed-out", new CookieOptions
@@ -81,8 +82,6 @@ public sealed class ApiHost(ITokenService tokens, ILogger<ApiHost> logger)
             Secure = true,
             SameSite = SameSiteMode.Strict,
             Path = "/",
-            MaxAge = TimeSpan.Zero,
-            Expires = DateTimeOffset.UnixEpoch,
         });
 
     public static string? ClientIp(HttpRequest req) =>
