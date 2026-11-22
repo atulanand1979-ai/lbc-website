@@ -37,7 +37,7 @@ Website for Leicester Bhangra Classes ("Britain's largest Bhangra school": weekl
 - Pinned versions: Microsoft.Extensions.* **10.0.x** (not 11 — must match the ASP.NET Core 10 shared framework in the Functions worker); MailKit 5 (`SendAsync(new SendRequest(msg))`); Eleventy 3.1.8.
 
 ## Infrastructure (as of 2026-11-22)
-- GitHub: private repo `https://github.com/atulanand1979-ai/lbc-website`, branch `main`. Workflow `.github/workflows/azure-static-web-apps.yml` tests, builds site + API itself (`skip_app_build`/`skip_api_build`) and deploys; PRs get preview environments.
+- GitHub: private repo `https://github.com/atulanand1979-ai/lbc-website`, branch `main`. Workflow `.github/workflows/azure-static-web-apps.yml` tests, builds site + API itself (`skip_app_build`/`skip_api_build`) and deploys. **Manual only** (`workflow_dispatch`, developer's choice): pushes don't deploy and there are no PR preview environments — run it from Actions → "Build and deploy" → Run workflow.
 - Azure subscription "Azure subscription 1", resource group **`rg-lbc`**:
   - Static Web App **`swa-lbc`** (Free, West Europe) — `https://kind-mud-081113903.3.azurestaticapps.net`. Created via CLI with **no linked repo** (portal "GitHub" source caused a repositoryUrl template error).
   - Storage account **`stlbc2d8cxf9r`** (Standard LRS, UK South).
@@ -45,7 +45,7 @@ Website for Leicester Bhangra Classes ("Britain's largest Bhangra school": weekl
 - Repo commits use the developer's personal email (set in local git config), not the work email.
 
 ## Status / next steps
-1. **Pending (developer):** add GitHub secret `AZURE_STATIC_WEB_APPS_API_TOKEN` (from swa-lbc → Manage deployment token) and re-run the workflow. First deploy not yet confirmed.
+1. **Pending (developer):** add GitHub secret `AZURE_STATIC_WEB_APPS_API_TOKEN` (from swa-lbc → Manage deployment token) and run the workflow manually. First deploy not yet confirmed.
 2. After deploy: bootstrap the admin, seed the 8 places, smoke-test the live site.
 3. Choose and implement the real payment provider (blocks go-live).
 4. Get the client's SMTP mailbox details → set `Smtp__*`, switch `Smtp__Mode=Smtp`.
