@@ -53,7 +53,9 @@ Website for Leicester Bhangra Classes ("Britain's largest Bhangra school": weekl
 - Azure subscription "Azure subscription 1", resource group **`rg-lbc`**:
   - Static Web App **`swa-lbc`** (Free, West Europe) — `https://kind-mud-081113903.3.azurestaticapps.net`. Created via CLI with **no linked repo** (portal "GitHub" source caused a repositoryUrl template error).
   - Storage account **`stlbc2d8cxf9r`** (Standard LRS, UK South).
-  - SWA app settings set: `TABLES_CONNECTION_STRING`, `Jwt__SigningKey`, `ADMIN_BOOTSTRAP_KEY`, `Site__BaseUrl`, `Site__AdminEmail`, `Smtp__Mode=Log`, `Payments__Provider=Fake`, `Payments__FakeWebhookSecret`. Read values with `az staticwebapp appsettings list -n swa-lbc -g rg-lbc` — never commit them.
+  - SWA app settings set: `TABLES_CONNECTION_STRING`, `Jwt__SigningKey`, `ADMIN_BOOTSTRAP_KEY`, `Site__BaseUrl`, `Site__AdminEmail` (developer's gmail for now), `Smtp__*` (Gmail), `Payments__Provider=Fake`, `Payments__FakeWebhookSecret`. Read values with `az staticwebapp appsettings list -n swa-lbc -g rg-lbc` — never commit them.
+  - **Email: dedicated Gmail `classesleicesterbhangra@gmail.com`** via `smtp.gmail.com:587` StartTls with an app password (set by the developer; never handle it in chat). Gmail forces From = that address.
+  - ⚠️ **`Smtp__RedirectAllTo` = developer's gmail** while testing: every system email (customer ones too) goes to the developer, subject prefixed `[to <real recipient>]`. Remove before go-live.
   - ⚠️ **Fake payments are ON in production** for testing: anyone with the URL can mark a booking/membership paid. Remove `Payments__Provider` before the client shares the URL.
 - Repo commits use the developer's personal email (set in local git config), not the work email.
 
@@ -61,7 +63,7 @@ Website for Leicester Bhangra Classes ("Britain's largest Bhangra school": weekl
 1. ✅ Deployed (site + API + Table Storage working). Admin account created (developer's gmail) via bootstrap; `ADMIN_BOOTSTRAP_KEY` can now be deleted.
 2. ✅ Live places: **Leicester, Bedford, Kettering only** (developer's choice — the other 5 from `SeedService` are not loaded; add them via Admin → Places when wanted. The "Load the 8 places" button is a no-op once any place exists). Next: smoke-test PAYG + membership with the fake gateway.
 3. Choose and implement the real payment provider (blocks go-live).
-4. Get the client's SMTP mailbox details → set `Smtp__*`, switch `Smtp__Mode=Smtp`.
+4. Email: sending from a dedicated Gmail for testing, all redirected to the developer. Before go-live: decide the final mailbox (client's own or the Gmail), remove `Smtp__RedirectAllTo`, set `Site__AdminEmail` to the client's inbox. No way yet to add more admins (bootstrap only works once) — needs a script or an admin-area feature.
 5. Custom domain (client currently uses leicesterbhangraclasses.co.uk) → update `Site__BaseUrl`.
 6. Privacy policy, cookie notice, terms (UK GDPR); confirm VAT status.
 7. Optional: Cloudflare Turnstile keys for form anti-spam.
@@ -81,3 +83,4 @@ Website for Leicester Bhangra Classes ("Britain's largest Bhangra school": weekl
 
 ## Change log
 - 2026-11-22 — First deploy confirmed. Admin bootstrapped. Fake payments enabled on live. Loaded Leicester, Bedford, Kettering (with their weekly classes) into live tables. Added working rules + `lbc` agent (`.claude/agents/lbc.md`).
+- 2026-11-22 — Real email on: Gmail `classesleicesterbhangra@gmail.com` SMTP settings, new `Smtp__RedirectAllTo` option (all mail → developer while testing), `Site__AdminEmail` → developer's gmail.

@@ -44,7 +44,8 @@ dotnet test
 | `Jwt__SigningKey` | ≥32 random characters; signs the session cookie |
 | `Site__BaseUrl` | e.g. `https://www.leicesterbhangraclasses.co.uk` (links in emails, payment redirects) |
 | `Site__AdminEmail` | Inbox for enquiries |
-| `Smtp__Mode` = `Smtp`, `Smtp__Host`, `Smtp__Port`, `Smtp__Security` (`StartTls`/`SslOnConnect`), `Smtp__Username`, `Smtp__Password`, `Smtp__FromAddress` | Client's own mailbox |
+| `Smtp__Mode` = `Smtp`, `Smtp__Host`, `Smtp__Port`, `Smtp__Security` (`StartTls`/`SslOnConnect`), `Smtp__Username`, `Smtp__Password`, `Smtp__FromAddress`, `Smtp__FromName` | Sending mailbox (Gmail: `smtp.gmail.com`, 587, `StartTls`, app password; From must be the Gmail address) |
+| `Smtp__RedirectAllTo` | Testing only: every email goes to this address, subject prefixed with the real recipient. Remove before go-live |
 | `Payments__Provider` | `Fake` locally. **No real provider yet** – checkouts are refused until one is added |
 | `Turnstile__SiteKey`, `Turnstile__SecretKey` | Optional Cloudflare Turnstile anti-spam on public forms |
 | `ADMIN_BOOTSTRAP_KEY` | One-off first-admin creation (remove after use) |

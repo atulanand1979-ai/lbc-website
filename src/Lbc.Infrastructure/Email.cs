@@ -21,6 +21,11 @@ public sealed class SmtpOptions
     public string? Password { get; set; }
     public string FromAddress { get; set; } = "info@leicesterbhangraclasses.co.uk";
     public string FromName { get; set; } = "Leicester Bhangra Classes";
+    /// <summary>
+    /// Testing aid: when set, every email goes to this address instead of its real recipient,
+    /// and the subject is prefixed with the original recipient. Leave empty in production.
+    /// </summary>
+    public string? RedirectAllTo { get; set; }
 }
 
 /// <summary>Sends mail through any SMTP server (the client's own mailbox provider).</summary>
@@ -29,6 +34,9 @@ public sealed class SmtpEmailSender(IOptions<SmtpOptions> options, ILogger<SmtpE
     public async Task SendAsync(EmailMessage message, CancellationToken ct = default)
     {
         var o = options.Value;
+        if (!string.IsNullOrWhiteSpace(o.RedirectAllTo))
+            message = message with { To = o.RedirectAllTo.Trim(), Subject = $"[to {message.To}] {message.Subject}" };
+
         if (!string.Equals(o.Mode, "Smtp", StringComparison.OrdinalIgnoreCase))
         {
             logger.LogInformation("EMAIL (not sent, Smtp:Mode={Mode}) To={To} Subject={Subject}\n{Body}", o.Mode, message.To, message.Subject, message.HtmlBody);
