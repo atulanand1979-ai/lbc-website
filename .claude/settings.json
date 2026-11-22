@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "ask": [
+      "Bash(az storage *)",
+      "Bash(az staticwebapp appsettings set *)",
+      "Bash(az staticwebapp appsettings delete *)",
+      "Bash(az staticwebapp update *)",
+      "Bash(az staticwebapp delete *)",
+      "Bash(az group delete *)",
+      "Bash(az resource delete *)",
+      "Bash(gh workflow run *)",
+      "Bash(dotnet run *)",
+      "Bash(*stlbc2d8cxf9r*)",
+      "Bash(*TABLES_CONNECTION_STRING*)",
+      "Bash(*LBC_TABLES*)",
+      "Bash(*azurestaticapps.net/api/manage*)",
+      "PowerShell(az storage *)",
+      "PowerShell(az staticwebapp appsettings set *)",
+      "PowerShell(az staticwebapp appsettings delete *)",
+      "PowerShell(az staticwebapp update *)",
+      "PowerShell(az staticwebapp delete *)",
+      "PowerShell(az group delete *)",
+      "PowerShell(az resource delete *)",
+      "PowerShell(gh workflow run *)",
+      "PowerShell(dotnet run *)",
+      "PowerShell(*stlbc2d8cxf9r*)",
+      "PowerShell(*TABLES_CONNECTION_STRING*)",
+      "PowerShell(*LBC_TABLES*)",
+      "PowerShell(*azurestaticapps.net/api/manage*)"
+    ]
+  }
+}

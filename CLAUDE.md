@@ -2,6 +2,18 @@
 
 Context for anyone (human or Claude) picking this project up. How-to-run and the full settings table live in `README.md`; this file records **what was agreed, why, and where things stand**.
 
+## Working rules (always follow — main session or the `lbc` agent)
+1. **Live data needs explicit approval.** Before any add, update or delete against the live Azure tables (storage account `stlbc2d8cxf9r` — via scripts, `az storage`, the live `/api/manage/*` endpoints, or anything else), state exactly which rows/places/classes/members will change and get the developer's "yes" for *that* change. Approval for one change does not cover the next. Reading live data is fine without asking. Local Azurite data is not live.
+2. **Live settings and deploys need approval too:** changing SWA app settings, Azure resources, or running the deploy workflow.
+3. **Keep this file current — but only for changes that are kept.** The developer often tries changes and discards them, so:
+   - **Code/content changes:** don't touch this file while working. Update it only when the developer asks to commit and push, and include the update in that same commit. Discarded changes never reach this file.
+   - **Live data / settings / Azure changes** (no push involved; they take effect immediately): update this file once the approved change has been applied successfully.
+   - What to update: the relevant sections (rules, decisions, infrastructure, status, content to confirm), plus a dated line in the change log at the bottom. Remove anything no longer true. Never record secrets, tokens or connection strings.
+4. Commit/push only when asked. Commits use the developer's personal email (already in local git config).
+5. Never print secrets in chat; read them from `az staticwebapp appsettings list -n swa-lbc -g rg-lbc` into variables.
+6. `.claude/settings.json` has `ask` permission rules (az storage, appsettings set/delete, resource deletes, `gh workflow run`, `dotnet run`, anything naming the storage account, `TABLES_CONNECTION_STRING`/`LBC_TABLES`, or the live `/api/manage` URL) so these always prompt. Don't work around them; add a rule if a new live-write path appears.
+7. One-off data scripts go in the session scratchpad, not the repo. Pattern that works: a .NET file-based app (`dotnet run x.cs`) with `#:project ...\Lbc.Infrastructure.csproj`, `#:package Microsoft.Extensions.*@10.0.15`, `#:property PublishAot=false`, connection string from env var, calling `ScheduleAdminService`/repositories so rows match the app's shape.
+
 ## The project
 Website for Leicester Bhangra Classes ("Britain's largest Bhangra school": weekly classes in 8 English cities, workshops, event performances). Built by a senior .NET developer for the client. Inputs from the client:
 - Design template: Claude Design canvas `https://claude.ai/artifact/L9Ei5yU96vLyYANu5Youkp` (9 boards: Home, Workshops, Locations, Sign Up, Book Us, Charity, Reviews, Shop, Contact). Yellow `#FFD400` / black `#0B0B0B`, Anton (display) + Inter (body). Recreated as classes in `src/web/src/css/site.css`.
@@ -41,12 +53,13 @@ Website for Leicester Bhangra Classes ("Britain's largest Bhangra school": weekl
 - Azure subscription "Azure subscription 1", resource group **`rg-lbc`**:
   - Static Web App **`swa-lbc`** (Free, West Europe) — `https://kind-mud-081113903.3.azurestaticapps.net`. Created via CLI with **no linked repo** (portal "GitHub" source caused a repositoryUrl template error).
   - Storage account **`stlbc2d8cxf9r`** (Standard LRS, UK South).
-  - SWA app settings set: `TABLES_CONNECTION_STRING`, `Jwt__SigningKey`, `ADMIN_BOOTSTRAP_KEY`, `Site__BaseUrl`, `Site__AdminEmail`, `Smtp__Mode=Log`. Read values with `az staticwebapp appsettings list -n swa-lbc -g rg-lbc` — never commit them.
+  - SWA app settings set: `TABLES_CONNECTION_STRING`, `Jwt__SigningKey`, `ADMIN_BOOTSTRAP_KEY`, `Site__BaseUrl`, `Site__AdminEmail`, `Smtp__Mode=Log`, `Payments__Provider=Fake`, `Payments__FakeWebhookSecret`. Read values with `az staticwebapp appsettings list -n swa-lbc -g rg-lbc` — never commit them.
+  - ⚠️ **Fake payments are ON in production** for testing: anyone with the URL can mark a booking/membership paid. Remove `Payments__Provider` before the client shares the URL.
 - Repo commits use the developer's personal email (set in local git config), not the work email.
 
 ## Status / next steps
-1. **Pending (developer):** add GitHub secret `AZURE_STATIC_WEB_APPS_API_TOKEN` (from swa-lbc → Manage deployment token) and run the workflow manually. First deploy not yet confirmed.
-2. After deploy: bootstrap the admin, seed the 8 places, smoke-test the live site.
+1. ✅ Deployed (site + API + Table Storage working). Admin account created (developer's gmail) via bootstrap; `ADMIN_BOOTSTRAP_KEY` can now be deleted.
+2. ✅ Live places: **Leicester, Bedford, Kettering only** (developer's choice — the other 5 from `SeedService` are not loaded; add them via Admin → Places when wanted. The "Load the 8 places" button is a no-op once any place exists). Next: smoke-test PAYG + membership with the fake gateway.
 3. Choose and implement the real payment provider (blocks go-live).
 4. Get the client's SMTP mailbox details → set `Smtp__*`, switch `Smtp__Mode=Smtp`.
 5. Custom domain (client currently uses leicesterbhangraclasses.co.uk) → update `Site__BaseUrl`.
@@ -65,3 +78,6 @@ Website for Leicester Bhangra Classes ("Britain's largest Bhangra school": weekl
 - This Windows machine had **Smart App Control** blocking locally built DLLs (`0x800711C7`); the developer turned it off. `docker-compose.yml` runs Azurite + API in Linux containers as a fallback.
 - The machine can run low on memory; background dev servers may be stopped by Claude Code. Docker Desktop isn't needed now.
 - GitHub CLI device login timed out from the `!` shell; pushing works through Git Credential Manager instead.
+
+## Change log
+- 2026-11-22 — First deploy confirmed. Admin bootstrapped. Fake payments enabled on live. Loaded Leicester, Bedford, Kettering (with their weekly classes) into live tables. Added working rules + `lbc` agent (`.claude/agents/lbc.md`).
