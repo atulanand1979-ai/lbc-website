@@ -31,7 +31,7 @@ public static class EmailTemplates
             ? Button($"{site.BaseUrl}/account/", "View my bookings")
             : $"<p>Create your account to see your bookings any time:</p>{Button(setPasswordUrl, "Create my account")}<p style=\"font-size:13px;color:#454545\">This link expires in 7 days.</p>";
         var body = $"""
-            <p>Hi {E(booking.Name)}, thanks for booking â€” you're in!</p>
+            <p>Hi {E(booking.Name)}, thanks for booking. You're in!</p>
             <table role="presentation" cellpadding="6" style="border-collapse:collapse;font-size:15px">
             <tr><td><b>Class</b></td><td>{E(booking.ClassLabel)}</td></tr>
             <tr><td><b>Date</b></td><td>{booking.Date:dddd d MMMM yyyy}</td></tr>
@@ -59,8 +59,8 @@ public static class EmailTemplates
             : $"<p>Create your account to view your membership any time:</p>{Button(setPasswordUrl, "Create my account")}<p style=\"font-size:13px;color:#454545\">This link expires in 7 days.</p>";
         var body = $"""
             <p>Hi {E(user.Name)}, welcome to the LBC family!</p>
-            <p><b>{membership.Tier} membership</b> â€” {Money.Format(membership.MonthlyPricePence)} per month.<br>{scope}</p>
-            <p>No need to book â€” just turn up and give your name to the teacher.</p>
+            <p><b>{membership.Tier} membership</b>: {Money.Format(membership.MonthlyPricePence)} per month.<br>{scope}</p>
+            <p>No need to book. Just turn up and give your name to the teacher.</p>
             {account}
             """;
         return new(user.Email, $"Welcome to your {membership.Tier} membership", Layout(site.BusinessName, "Membership active", body));
@@ -92,7 +92,7 @@ public static class EmailTemplates
             <tr><td><b>Name</b></td><td>{E(e.Name)}</td></tr>
             <tr><td><b>Email</b></td><td>{E(e.Email)}</td></tr>
             <tr><td><b>Phone</b></td><td>{E(e.Phone)}</td></tr>
-            <tr><td><b>Event date</b></td><td>{e.EventDate?.ToString("d MMM yyyy") ?? "â€”"}</td></tr>
+            <tr><td><b>Event date</b></td><td>{e.EventDate?.ToString("d MMM yyyy") ?? "Not given"}</td></tr>
             </table>
             <p style="white-space:pre-wrap">{E(e.Message)}</p>
             """;

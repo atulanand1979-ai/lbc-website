@@ -13,7 +13,7 @@
   <div class="field"><label for="{{ enquiryId }}-topic">What's it about?</label>
     <select id="{{ enquiryId }}-topic" name="topic">{% for t in enquiryTopics %}<option>{{ t }}</option>{% endfor %}</select></div>
   {% endif %}
-  <div class="field"><label for="{{ enquiryId }}-msg">Message</label><textarea id="{{ enquiryId }}-msg" name="message" rows="5" required placeholder="Tell us a little about what you're looking for — numbers, location, ideas…"></textarea></div>
+  <div class="field"><label for="{{ enquiryId }}-msg">Message</label><textarea id="{{ enquiryId }}-msg" name="message" rows="5" required placeholder="Tell us a little about what you're looking for: numbers, location, ideas…"></textarea></div>
   <div data-captcha></div>
   <div class="alert" data-message hidden></div>
   <div><button class="btn btn--yellow-outline" type="submit">Send enquiry</button></div>

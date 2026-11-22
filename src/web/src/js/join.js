@@ -31,13 +31,13 @@ form.addEventListener("change", (e) => { if (e.target.name === "tier") update();
 
 const wanted = params.get("tier");
 if (wanted && TIERS[wanted]) form.querySelector(`input[name=tier][value=${wanted}]`).checked = true;
-if (params.get("cancelled")) showMessage(message, "info", "Direct Debit set-up was cancelled — no membership has been set up.");
+if (params.get("cancelled")) showMessage(message, "info", "Direct Debit set-up was cancelled, so no membership has been set up.");
 
 (async () => {
   try {
     const venues = await api("venues");
     venueSelect.innerHTML = `<option value="">Choose your city…</option>` +
-      venues.map((v) => `<option value="${esc(v.slug)}">${esc(v.city)} — ${esc(v.name)}</option>`).join("");
+      venues.map((v) => `<option value="${esc(v.slug)}">${esc(v.city)}: ${esc(v.name)}</option>`).join("");
   } catch { /* the API error will surface on submit */ }
   update();
 })();

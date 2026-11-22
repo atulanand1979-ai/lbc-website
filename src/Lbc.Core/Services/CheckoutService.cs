@@ -43,7 +43,7 @@ public sealed class CheckoutService(
         var alreadyBooked = (await bookings.GetForSessionAsync(schedule.Id, date, ct))
             .Any(b => b.Email == emailAddress && b.Status != BookingStatus.Pending);
         if (alreadyBooked)
-            throw new ValidationException("You're already booked into this class on that date — see you there!");
+            throw new ValidationException("You're already booked into this class on that date. See you there!");
 
         var user = await accounts.EnsureUserAsync(emailAddress, name, phone, ct);
 

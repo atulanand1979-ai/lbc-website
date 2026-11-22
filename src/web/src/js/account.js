@@ -24,9 +24,9 @@ function render(a) {
         <p><span class="status status--${esc(m.status)}">${esc(STATUS[m.status] || m.status)}</span></p>
         <p>${money(m.monthlyPricePence)} per month${m.tier === "Bronze" && m.homeVenueCity ? ` · Home location: <b>${esc(m.homeVenueCity)}</b>` : ""}</p>
         ${m.currentPeriodEnd && m.status !== "Cancelled" ? `<p class="muted">Next payment due: ${esc(fmtDate(m.currentPeriodEnd))}</p>` : ""}
-        <p class="muted small">Members don't need to book — just turn up and give your name to the teacher. To change or cancel your membership, please contact us.</p>
+        <p class="muted small">Members don't need to book. Just turn up and give your name to the teacher. To change or cancel your membership, please contact us.</p>
       </div>`
-    : `<div class="card"><h3>No membership</h3><p>Save with a monthly membership — unlimited classes from £25 a month.</p><div class="btn-row"><a class="btn btn--yellow-outline" href="/signup/#classes">View memberships</a></div></div>`;
+    : `<div class="card"><h3>No membership</h3><p>Save with a monthly membership: unlimited classes from £25 a month.</p><div class="btn-row"><a class="btn btn--yellow-outline" href="/signup/#classes">View memberships</a></div></div>`;
 
   accountPanel.innerHTML = `
     <div class="section__head section__head--split">

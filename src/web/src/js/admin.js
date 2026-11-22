@@ -72,10 +72,10 @@ async function loadPlaces() {
         ${v.classes.map((c) => `<tr>
           <td><b>${esc(c.dayOfWeek)}</b>${c.isActive ? "" : ` <span class="status status--Cancelled">Off</span>`}</td>
           <td>${esc(c.startTime)}–${esc(c.endTime)}</td><td>${esc(c.level)}</td>
-          <td class="small">${c.skipDates.length ? c.skipDates.map((d) => esc(fmtDate(d))).join("<br>") : "—"}</td>
+          <td class="small">${c.skipDates.length ? c.skipDates.map((d) => esc(fmtDate(d))).join("<br>") : "-"}</td>
           <td><div class="btn-row"><button class="btn btn--small" data-edit-class="${esc(v.slug)}|${esc(c.id)}">Edit</button>
             <button class="btn btn--small btn--danger" data-delete-class="${esc(v.slug)}|${esc(c.id)}">Delete</button></div></td>
-        </tr>`).join("")}</tbody></table></div>` : `<p class="muted">No weekly classes yet — add one so people can book.</p>`}
+        </tr>`).join("")}</tbody></table></div>` : `<p class="muted">No weekly classes yet. Add one so people can book.</p>`}
     </article>`).join("") || `<p class="muted">No places yet.</p>`;
 }
 
@@ -208,8 +208,8 @@ function renderMembers() {
     <thead><tr><th>Member</th><th>Tier</th><th>Home</th><th>Status</th><th>Next payment</th><th></th></tr></thead><tbody>
     ${rows.map((m) => `<tr><td><b>${esc(m.name)}</b><br><span class="small muted">${esc(m.email)} · ${esc(m.phone)}</span></td>
       <td>${esc(m.tier)}<br><span class="small muted">${money(m.monthlyPricePence)}/mo</span></td>
-      <td>${esc(m.homeVenueCity || "—")}</td><td><span class="status status--${esc(m.status)}">${esc(m.status)}</span></td>
-      <td class="small">${m.currentPeriodEnd && m.status !== "Cancelled" ? esc(fmtDate(m.currentPeriodEnd)) : "—"}</td>
+      <td>${esc(m.homeVenueCity || "-")}</td><td><span class="status status--${esc(m.status)}">${esc(m.status)}</span></td>
+      <td class="small">${m.currentPeriodEnd && m.status !== "Cancelled" ? esc(fmtDate(m.currentPeriodEnd)) : "-"}</td>
       <td><div class="btn-row">${m.tier === "Bronze" && m.status !== "Cancelled" ? `<button class="btn btn--small" data-home="${esc(m.id)}">Change home</button>` : ""}
         ${m.status !== "Cancelled" ? `<button class="btn btn--small btn--danger" data-cancel="${esc(m.id)}">Cancel</button>` : ""}</div></td></tr>`).join("")}
     </tbody></table></div>` : `<p class="muted">No memberships match.</p>`;

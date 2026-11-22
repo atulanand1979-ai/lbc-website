@@ -70,6 +70,9 @@ Website for Leicester Bhangra Classes ("Britain's largest Bhangra school": weekl
 6. Privacy policy, cookie notice, terms (UK GDPR); confirm VAT status.
 7. Cloudflare Turnstile keys for form anti-spam — more important now PAYG bookings need no payment.
 
+## Copy style
+- **No em dashes (—) in anything visible** (pages, page descriptions, JS messages, emails, API errors): developer's request 2026-11-22. Use a full stop, comma, colon or brackets; `-` for empty table cells. Quote front-matter `description:` values that contain `: `. Save source files as UTF-8 (the email templates once had garbled `â€”` from a bad encoding).
+
 ## Content the client must confirm
 - Hike amount for Khalsa Aid (doc says "AMAN ADD THE AMOUNT HERE") — placeholder on Charity page.
 - Derby start date assumed **4 Feb 2027** (doc: "starting in February") — editable in admin.
@@ -89,3 +92,4 @@ Website for Leicester Bhangra Classes ("Britain's largest Bhangra school": weekl
 - 2026-11-22 — PAYG changed to "book now, pay at the class": no gateway page, confirmation email sent immediately, register shows who to collect from, duplicate bookings refused. Workflow now deploys on every push to `main` (temporary).
 - 2026-11-22 — Fixed Sign out on live: the logout Set-Cookie never reached the browser when the cookie was already expired (`Cookies.Delete`, and `Max-Age=0` didn't help either — suspected Functions-host behaviour). Logout now overwrites `lbc_session` with an invalid value and no expiry; the account page checks `/api/me` afterwards and warns if still signed in.
 - 2026-11-22 — Memberships via GoCardless Direct Debit: `GoCardlessPaymentGateway`, webhooks parsed as a batch, demo Direct Debit page `/dev/fake-direct-debit.html` for the fake provider, join page copy says Direct Debit. Not yet tested against the GoCardless sandbox.
+- 2026-11-22 — Fixed garbled `â€”` in every email (mis-encoded em dashes in `EmailTemplates.cs`). Removed all visible em dashes from the site, emails and messages (new Copy style rule).
